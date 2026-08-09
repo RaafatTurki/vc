@@ -117,7 +117,7 @@ func (s *Server) websocket(w http.ResponseWriter, r *http.Request) {
 func (s *Server) originAllowed(r *http.Request) bool {
 	origin := strings.TrimSuffix(r.Header.Get("Origin"), "/")
 	if origin == "" {
-		return false
+		return true
 	}
 	for _, allowed := range s.cfg.AllowedOrigins {
 		if allowed == "*" || strings.TrimSuffix(allowed, "/") == origin {
