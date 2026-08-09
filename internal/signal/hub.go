@@ -22,7 +22,6 @@ func NewHub(maxRoomPeers int) *Hub {
 	return &Hub{rooms: make(map[string]map[string]*client), maxRoomPeers: maxRoomPeers}
 }
 
-
 func (h *Hub) Join(c *client, welcome ServerMessage) error {
 	h.mu.Lock()
 	defer h.mu.Unlock()
