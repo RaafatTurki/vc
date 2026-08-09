@@ -8,7 +8,7 @@ export function createRoomID(): string {
 
   while (room.length < 6) {
     for (const byte of crypto.getRandomValues(new Uint8Array(8))) {
-      room += alphabet[byte % alphabet.length]
+      if (byte < 248) room += alphabet[byte % alphabet.length]
       if (room.length === 6) break
     }
   }
