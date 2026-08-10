@@ -31,7 +31,6 @@
     onToggleMute = () => {},
   }: Props = $props()
   let card: HTMLElement
-
   let video: HTMLVideoElement
   let fullscreen = $state(false)
   let speaking = $state(false)
