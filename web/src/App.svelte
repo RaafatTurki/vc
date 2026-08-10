@@ -222,7 +222,7 @@
   function queueSignalMessage(event: MessageEvent<string>): void {
     if (event.currentTarget !== socket) return
     const epoch = callEpoch
-    signalQueue = Promise.resolve().then(() => {
+    signalQueue = signalQueue.then(() => {
       if (epoch === callEpoch) return onSignalMessage(event, epoch)
     })
   }
