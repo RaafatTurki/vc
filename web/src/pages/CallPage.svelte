@@ -2,7 +2,7 @@
   import CallControls from "../lib/CallControls.svelte"
   import CallHeader from "../lib/CallHeader.svelte"
   import DeviceControls from "../lib/DeviceControls.svelte"
-  import Participants from "../lib/Participants.svelte"
+  import VideoGrid from "../lib/VideoGrid.svelte"
   import type { DeviceType, MediaDeviceOption, Peer } from "../lib/types"
 
   interface Props {
@@ -76,7 +76,7 @@
 
 <section aria-label="Vivid call">
   <CallHeader {roomID} {copyLabel} {onCopy} />
-  <Participants
+  <VideoGrid
     {localStream}
     {participantName}
     {deviceType}
