@@ -1,0 +1,69 @@
+name: vivid
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    environment:
+      SIGNAL_ADDRESS: ":8080"
+      SIGNAL_ALLOWED_ORIGINS: "${SIGNAL_ALLOWED_ORIGINS:-https://vivid.raafat.io}"
+      SIGNAL_MAX_ROOM_PEERS: "${SIGNAL_MAX_ROOM_PEERS:-8}"
+      STUN_URLS: "${STUN_URLS:-stun:stun.cloudflare.com:3478}"
+      TURN_URLS: "${TURN_URLS:-turn:turn.raafat.io:3478?transport=udp}"
+      TURN_SHARED_SECRET: "${TURN_SHARED_SECRET:?Set TURN_SHARED_SECRET in the root .env file}"
+      TURN_TTL: "${TURN_TTL:-30m}"
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      proxy:
+        aliases:
+          - vivid-backend
+    security_opt:
+      - no-new-privileges:true
+
+  coturn:
+    image: coturn/coturn:4.15.0-r0-alpine
+    restart: unless-stopped
+    init: true
+    network_mode: host
+    command:
+      - "--log-file=stdout"
+      - "--listening-port=3478"
+      - "--min-port=49160"
+      - "--max-port=49200"
+      - "--realm=${TURN_REALM:-turn.raafat.io}"
+      - "--fingerprint"
+      - "--use-auth-secret"
+      - "--static-auth-secret=${TURN_SHARED_SECRET:?Set TURN_SHARED_SECRET in the root .env file}"
+      - "--stale-nonce=600"
+      - "--no-cli"
+      - "--no-tls"
+      - "--no-dtls"
+      - "--no-multicast-peers"
+    tmpfs:
+      - /var/lib/coturn
+    security_opt:
+      - no-new-privileges:true
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      proxy:
+        aliases:
+          - vivid-web
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  proxy:
+    external: true
+    name: "${CADDY_NETWORK:-proxy}"
