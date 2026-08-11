@@ -1,0 +1,8 @@
+.git
+.agents
+.codex
+frontend
+web/node_modules
+web/dist
+.venom.json
+explanation.md
