@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Mic, MicOff, RefreshCw, Video, VideoOff } from "@lucide/svelte"
+  import { Download, Mic, MicOff, RefreshCw, Video, VideoOff } from "@lucide/svelte"
   import { createRoomID } from "../lib/call"
   import Button from "../lib/Button.svelte"
 
@@ -11,7 +11,9 @@
     joinWithVideo?: boolean
     joining: boolean
     setupError: string
+    installHint?: string
     onJoin: (event: SubmitEvent) => void | Promise<void>
+    onInstall?: () => void | Promise<void>
   }
 
   let {
@@ -22,7 +24,9 @@
     joinWithVideo = $bindable(),
     joining,
     setupError,
+    installHint = "",
     onJoin,
+    onInstall = () => {},
   }: Props = $props()
 </script>
 
@@ -33,6 +37,13 @@
     <h1 class="accent">Vivid</h1>
     <p class="intro">Create a room, share its link, and talk directly from browser to browser.</p>
     <p class="eyebrow">Private by design</p>
+    <div class="install-button">
+      <Button onclick={onInstall}>
+        <Download size={16} aria-hidden="true" />
+        Install web app
+      </Button>
+    </div>
+    {#if installHint}<p class="install-hint" role="status">{installHint}</p>{/if}
   </div>
 
   <form onsubmit={onJoin} novalidate>
@@ -115,6 +126,9 @@
     font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.65;
   }
+
+  .install-button { margin-top: var(--space-4); }
+  .install-hint { margin: var(--space-2) 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
 
   form {
     padding: clamp(1.25rem, 3vw, 1.75rem);

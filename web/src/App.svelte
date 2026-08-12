@@ -75,6 +75,8 @@
   let mixedAudioTrack: MediaStreamTrack | null = null
   let screenAudioContext: AudioContext | null = null
   let screenAudioNodes: AudioNode[] = []
+  let installPrompt: BeforeInstallPromptEvent | null = null
+  let installHint = $state("")
 
   onMount(() => {
     const query = new URLSearchParams(window.location.search)
@@ -87,6 +89,8 @@
     joinSound.preload = "auto"
     joinSound.volume = 0.65
     window.addEventListener("beforeunload", closeConnections)
+    window.addEventListener("beforeinstallprompt", handleInstallPrompt)
+    window.addEventListener("appinstalled", handleAppInstalled)
     window.addEventListener("popstate", handleRouteChange)
     navigator.mediaDevices?.addEventListener("devicechange", refreshMediaDevices)
 
@@ -105,11 +109,34 @@
 
   onDestroy(() => {
     window.removeEventListener("beforeunload", closeConnections)
+    window.removeEventListener("beforeinstallprompt", handleInstallPrompt)
+    window.removeEventListener("appinstalled", handleAppInstalled)
     window.removeEventListener("popstate", handleRouteChange)
     navigator.mediaDevices?.removeEventListener("devicechange", refreshMediaDevices)
     closeConnections()
     joinSound = null
   })
+
+  function handleInstallPrompt(event: Event): void {
+    event.preventDefault()
+    installPrompt = event as BeforeInstallPromptEvent
+  }
+
+  function handleAppInstalled(): void {
+    installPrompt = null
+  }
+
+  async function installApp(): Promise<void> {
+    if (!installPrompt) {
+      installHint = "Install is available from your browser menu when this site is open over HTTPS."
+      return
+    }
+    const prompt = installPrompt
+    installPrompt = null
+    installHint = ""
+    await prompt.prompt()
+    await prompt.userChoice
+  }
 
   async function joinCall(event?: SubmitEvent): Promise<void> {
     event?.preventDefault()
@@ -1082,7 +1109,9 @@
       bind:joinWithVideo
       {joining}
       {setupError}
+      {installHint}
       onJoin={joinCall}
+      onInstall={installApp}
     />
   {:else}
     <CallPage
