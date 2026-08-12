@@ -134,72 +134,58 @@
 
 <article bind:this={card} class:local-card={local} class:remote-card={!local} class:mirrored class:screen-sharing={screenSharing} class:speaking class="video-card">
   <video bind:this={video} autoplay muted={local || locallyMuted} playsinline></video>
-  <button
-    class="tile-fullscreen"
-    type="button"
-    aria-label={fullscreen ? `Exit fullscreen for ${name}` : `View ${name} fullscreen`}
-    aria-pressed={fullscreen}
-    onclick={toggleFullscreen}
-  >
-    {#if fullscreen}
-      <Minimize2 aria-hidden="true" />
-    {:else}
-      <Maximize2 aria-hidden="true" />
-    {/if}
-  </button>
   <div class="video-meta" aria-label={`${device === "mobile" ? "Mobile" : "PC"}${microphoneMuted ? ", microphone muted" : ""}`}>
-    {#if !screenOnly}
-      <span class="video-badge">
-        {#if device === "mobile"}
-          <Smartphone class="badge-icon" aria-hidden="true" />
-          Mobile
-        {:else}
-          <Monitor class="badge-icon" aria-hidden="true" />
-          PC
-        {/if}
+    {#if !screenOnly && microphoneMuted}
+      <span class="video-badge muted-badge" title="Microphone off" aria-label="Microphone off">
+        <MicOff class="badge-icon" aria-hidden="true" />
       </span>
-      {#if microphoneMuted}
-        <span class="video-badge muted-badge">
-          <MicOff class="badge-icon" aria-hidden="true" />
-          Mic off
-        </span>
-      {/if}
-      {#if cameraStopped}
-        <span class="video-badge muted-badge">
-          <VideoOff class="badge-icon" aria-hidden="true" />
-          Camera off
-        </span>
-      {/if}
+    {/if}
+    {#if !screenOnly && cameraStopped}
+      <span class="video-badge muted-badge" title="Camera off" aria-label="Camera off">
+        <VideoOff class="badge-icon" aria-hidden="true" />
+      </span>
     {/if}
     {#if screenSharing}
-      <span class="video-badge sharing-badge">
+      <span class="video-badge sharing-badge" title="Screen sharing" aria-label="Screen sharing">
         <ScreenShare class="badge-icon" aria-hidden="true" />
-        Sharing
       </span>
     {/if}
   </div>
-  <div class="video-label">{name}</div>
-  {#if !local && !screenOnly}
-    <label class="tile-volume" aria-label={`Volume for ${name}`}>
-      <Volume2 aria-hidden="true" />
-      <input bind:value={volume} type="range" min="0" max="1" step="0.05" disabled={locallyMuted}>
-      <span>{Math.round(volume * 100)}%</span>
-    </label>
+  <div class="video-label">
+    {#if !screenOnly}
+      {#if device === "mobile"}<Smartphone class="device-icon" aria-hidden="true" />{:else}<Monitor class="device-icon" aria-hidden="true" />{/if}
+    {/if}
+    <span>{name}</span>
+  </div>
+  <div class="tile-actions">
     <button
-      class="tile-mute"
+      class="tile-fullscreen"
       type="button"
-      aria-pressed={locallyMuted}
-      aria-label={locallyMuted ? `Unmute ${name} for you` : `Mute ${name} for you`}
-      onclick={onToggleMute}
+      aria-label={fullscreen ? `Exit fullscreen for ${name}` : `View ${name} fullscreen`}
+      aria-pressed={fullscreen}
+      onclick={toggleFullscreen}
     >
-      {#if locallyMuted}
-        <VolumeX class="tile-mute-icon" aria-hidden="true" />
-      {:else}
-        <Volume2 class="tile-mute-icon" aria-hidden="true" />
-      {/if}
-      {locallyMuted ? "Unmute" : "Mute audio"}
+      {#if fullscreen}<Minimize2 aria-hidden="true" />{:else}<Maximize2 aria-hidden="true" />{/if}
     </button>
-  {/if}
+    {#if !local && !screenOnly}
+      <div class="audio-controls">
+        <label class="tile-volume" aria-label={`Volume for ${name}`}>
+          <Volume2 aria-hidden="true" />
+          <input bind:value={volume} style={`--volume-level: ${volume * 100}%`} type="range" min="0" max="1" step="0.05" disabled={locallyMuted}>
+          <span>{Math.round(volume * 100)}%</span>
+        </label>
+        <button
+          class="tile-mute"
+          type="button"
+          aria-pressed={locallyMuted}
+          aria-label={locallyMuted ? `Unmute ${name} for you` : `Mute ${name} for you`}
+          onclick={onToggleMute}
+        >
+          {#if locallyMuted}<VolumeX class="tile-mute-icon" aria-hidden="true" />{:else}<Volume2 class="tile-mute-icon" aria-hidden="true" />{/if}
+        </button>
+      </div>
+    {/if}
+  </div>
 </article>
 
 <style>
@@ -254,9 +240,13 @@
     top: var(--space-3);
     right: var(--space-3);
     display: grid;
-    width: 2.125rem;
-    height: 2.125rem;
-    padding: var(--space-2);
+    width: var(--overlay-height);
+    height: var(--overlay-height);
+    min-width: var(--overlay-height);
+    min-height: var(--overlay-height);
+    aspect-ratio: 1;
+    place-items: center;
+    padding: 0.4375rem;
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     color: var(--ink);
@@ -264,28 +254,46 @@
     backdrop-filter: blur(12px);
   }
 
+  .tile-actions {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 160ms ease;
+  }
+
+  .tile-actions > * { pointer-events: auto; }
+
   @media (hover: hover) and (pointer: fine) {
     .tile-fullscreen:hover { color: var(--accent); background: var(--accent-subtle); }
     .tile-mute:hover { color: var(--accent); }
   }
-  .tile-fullscreen :global(svg) { width: 100%; height: 100%; }
+  .tile-fullscreen :global(svg) { width: 1rem; height: 1rem; }
 
   .video-label {
     position: absolute;
     bottom: var(--space-3);
     left: var(--space-3);
     max-width: calc(100% - 9.375rem);
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    height: var(--overlay-height);
     overflow: hidden;
-    padding: 0.375rem 0.625rem;
+    padding: 0 0.625rem;
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     background: var(--surface-video);
     font-size: 0.76rem;
     font-weight: 720;
+    line-height: 1;
     text-overflow: ellipsis;
     white-space: nowrap;
     backdrop-filter: blur(12px);
   }
+
+  .video-label :global(.device-icon) { flex: 0 0 auto; width: 0.875rem; height: 0.875rem; color: var(--accent); }
 
   .video-meta {
     position: absolute;
@@ -310,52 +318,92 @@
   }
 
   .video-badge :global(.badge-icon) { width: 0.8125rem; height: 0.8125rem; }
-  .muted-badge { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
-  .sharing-badge { color: var(--accent); border-color: var(--accent-30); background: var(--accent-subtle); }
+  .muted-badge { color: var(--danger); border-color: var(--danger-border); background: var(--surface-video); }
+  .sharing-badge { color: var(--accent); border-color: var(--accent-30); background: var(--surface-video); }
 
   .tile-mute {
-    position: absolute;
-    right: var(--space-3);
-    bottom: var(--space-3);
     display: inline-flex;
     gap: var(--space-2);
     align-items: center;
-    min-height: 1.9375rem;
+    height: var(--overlay-height);
+    min-height: var(--overlay-height);
     padding: 0 0.625rem;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
+    border: 0;
+    border-left: 1px solid var(--line-soft);
+    border-radius: 0;
     color: var(--ink);
-    background: var(--surface-soft);
+    background: transparent;
     font-size: 0.72rem;
     font-weight: 700;
-    backdrop-filter: blur(12px);
   }
 
   .tile-mute[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
   .tile-mute :global(.tile-mute-icon) { width: 0.875rem; height: 0.875rem; }
 
   .tile-volume {
-    position: absolute;
-    right: var(--space-3);
-    bottom: 3.375rem;
     display: flex;
     gap: 0.4375rem;
     align-items: center;
-    width: min(11.125rem, calc(100% - 2rem));
+    width: min(11.125rem, 26vw);
     margin: 0;
-    padding: 0.4375rem 0.5625rem;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
+    padding: 0 0.5625rem;
+    border: 0;
     color: var(--ink);
-    background: var(--surface-control);
+    background: transparent;
     font-size: 0.68rem;
-    backdrop-filter: blur(12px);
   }
 
   .tile-volume > :global(svg) { flex: 0 0 auto; width: 0.875rem; height: 0.875rem; }
-  .tile-volume input { flex: 1; width: auto; min-width: 0; height: 0.25rem; padding: 0; accent-color: var(--accent); }
+  .tile-volume input {
+    flex: 1;
+    width: auto;
+    height: 0.25rem;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--accent) var(--volume-level), var(--line-strong) var(--volume-level));
+  }
+  .tile-volume input:focus { outline: none; }
+  .tile-volume input::-webkit-slider-thumb {
+    width: 0.65rem;
+    height: 0.65rem;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    appearance: none;
+  }
+  .tile-volume input::-moz-range-thumb {
+    width: 0.65rem;
+    height: 0.65rem;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+  }
   .tile-volume span { width: 1.875rem; text-align: right; }
   .tile-volume:has(input:disabled) { opacity: 0.55; }
+
+  .audio-controls {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: flex;
+    align-items: center;
+    height: var(--overlay-height);
+    max-width: calc(100% - 2rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    background: var(--surface-control);
+    backdrop-filter: blur(12px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tile-actions { opacity: 0; }
+    .video-card:hover .tile-actions,
+    .tile-actions:focus-within { opacity: 1; }
+  }
 
   @media (max-width: 47.5em) {
     .video-card { min-height: clamp(10rem, 52vw, 14rem); }
