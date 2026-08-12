@@ -207,11 +207,11 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: 280px;
-    border: 1px solid #242a38;
-    border-radius: 20px;
-    background: #111622;
-    clip-path: inset(0 round 20px);
+    min-height: clamp(12rem, 32vw, 17.5rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    background: var(--bg-soft);
+    clip-path: inset(0 round 2px);
     aspect-ratio: 16 / 10;
   }
 
@@ -219,9 +219,9 @@
     position: absolute;
     z-index: 10;
     inset: 0;
-    border: 3px solid #21d6a1;
+    border: 2px solid var(--accent);
     border-radius: inherit;
-    box-shadow: inset 0 0 18px rgb(33 214 161 / 18%);
+    box-shadow: inset 0 0 18px var(--accent-18);
     pointer-events: none;
     content: "";
   }
@@ -231,7 +231,7 @@
     width: 100%;
     height: 100%;
     border-radius: inherit;
-    background: #090c12;
+    background: var(--bg);
     object-fit: cover;
   }
 
@@ -251,32 +251,32 @@
 
   .tile-fullscreen {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: var(--space-3);
+    right: var(--space-3);
     display: grid;
-    width: 34px;
-    height: 34px;
-    padding: 8px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 9px;
-    color: #e9ebf2;
-    background: rgb(25 30 43 / 82%);
+    width: 2.125rem;
+    height: 2.125rem;
+    padding: var(--space-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--surface-soft);
     backdrop-filter: blur(12px);
   }
 
-  .tile-fullscreen:hover { background: rgb(42 49 67 / 92%); }
+  .tile-fullscreen:hover { color: var(--accent); background: var(--accent-subtle); }
   .tile-fullscreen :global(svg) { width: 100%; height: 100%; }
 
   .video-label {
     position: absolute;
-    bottom: 14px;
-    left: 14px;
-    max-width: calc(100% - 150px);
+    bottom: var(--space-3);
+    left: var(--space-3);
+    max-width: calc(100% - 9.375rem);
     overflow: hidden;
-    padding: 6px 10px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 8px;
-    background: rgb(5 7 11 / 66%);
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    background: var(--surface-video);
     font-size: 0.76rem;
     font-weight: 720;
     text-overflow: ellipsis;
@@ -286,75 +286,76 @@
 
   .video-meta {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: var(--space-3);
+    left: var(--space-3);
     display: flex;
-    gap: 6px;
+    gap: var(--space-2);
   }
 
   .video-badge {
     display: inline-flex;
-    gap: 5px;
+    gap: 0.3125rem;
     align-items: center;
-    padding: 5px 8px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 999px;
-    color: #d9deea;
-    background: rgb(5 7 11 / 66%);
+    padding: 0.3125rem var(--space-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--surface-video);
     font-size: 0.68rem;
     font-weight: 750;
     backdrop-filter: blur(12px);
   }
 
-  .video-badge :global(.badge-icon) { width: 13px; height: 13px; }
-  .muted-badge { color: #ffadb9; border-color: rgb(255 100 124 / 30%); background: rgb(74 25 37 / 78%); }
-  .sharing-badge { color: #aeb7ff; border-color: rgb(117 131 255 / 32%); background: rgb(34 40 91 / 82%); }
+  .video-badge :global(.badge-icon) { width: 0.8125rem; height: 0.8125rem; }
+  .muted-badge { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
+  .sharing-badge { color: var(--accent); border-color: var(--accent-30); background: var(--accent-subtle); }
 
   .tile-mute {
     position: absolute;
-    right: 14px;
-    bottom: 14px;
+    right: var(--space-3);
+    bottom: var(--space-3);
     display: inline-flex;
-    gap: 6px;
+    gap: var(--space-2);
     align-items: center;
-    min-height: 31px;
-    padding: 0 10px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 8px;
-    color: #e9ebf2;
-    background: rgb(25 30 43 / 82%);
+    min-height: 1.9375rem;
+    padding: 0 0.625rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--surface-soft);
     font-size: 0.72rem;
     font-weight: 700;
     backdrop-filter: blur(12px);
   }
 
-  .tile-mute[aria-pressed="true"] { color: #ffadb9; border-color: rgb(255 100 124 / 30%); background: rgb(74 25 37 / 88%); }
-  .tile-mute :global(.tile-mute-icon) { width: 14px; height: 14px; }
+  .tile-mute:hover { color: var(--accent); }
+  .tile-mute[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
+  .tile-mute :global(.tile-mute-icon) { width: 0.875rem; height: 0.875rem; }
 
   .tile-volume {
     position: absolute;
-    right: 14px;
-    bottom: 54px;
+    right: var(--space-3);
+    bottom: 3.375rem;
     display: flex;
-    gap: 7px;
+    gap: 0.4375rem;
     align-items: center;
-    width: 178px;
+    width: min(11.125rem, calc(100% - 2rem));
     margin: 0;
-    padding: 7px 9px;
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 9px;
-    color: #dfe3ed;
-    background: rgb(25 30 43 / 86%);
+    padding: 0.4375rem 0.5625rem;
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--surface-control);
     font-size: 0.68rem;
     backdrop-filter: blur(12px);
   }
 
-  .tile-volume > :global(svg) { flex: 0 0 auto; width: 14px; height: 14px; }
-  .tile-volume input { flex: 1; width: auto; min-width: 0; height: 4px; padding: 0; accent-color: #7d89ff; }
-  .tile-volume span { width: 30px; text-align: right; }
+  .tile-volume > :global(svg) { flex: 0 0 auto; width: 0.875rem; height: 0.875rem; }
+  .tile-volume input { flex: 1; width: auto; min-width: 0; height: 0.25rem; padding: 0; accent-color: var(--accent); }
+  .tile-volume span { width: 1.875rem; text-align: right; }
   .tile-volume:has(input:disabled) { opacity: 0.55; }
 
-  @media (max-width: 760px) {
-    .video-card { min-height: 210px; }
+  @media (max-width: 47.5em) {
+    .video-card { min-height: clamp(10rem, 52vw, 14rem); }
   }
 </style>

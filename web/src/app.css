@@ -1,26 +1,88 @@
 :root {
   color-scheme: dark;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #f5f7fb;
-  background: #080b12;
+  --bg: #050505;
+  --bg-soft: #0a0a0a;
+  --ink: #f0f0f0;
+  --muted: #8f8f8f;
+  --accent: #43ff6a;
+  --line: rgb(255 255 255 / 10%);
+  --line-soft: rgb(255 255 255 / 12%);
+  --line-strong: rgb(255 255 255 / 16%);
+  --line-14: rgb(255 255 255 / 14%);
+  --surface: rgb(10 10 10 / 92%);
+  --surface-soft: rgb(5 5 5 / 82%);
+  --surface-faint: rgb(255 255 255 / 6%);
+  --surface-video: rgb(5 5 5 / 78%);
+  --surface-control: rgb(5 5 5 / 88%);
+  --accent-soft: rgb(67 255 106 / 5%);
+  --accent-subtle: rgb(67 255 106 / 8%);
+  --accent-border: rgb(67 255 106 / 24%);
+  --accent-border-strong: rgb(67 255 106 / 70%);
+  --accent-glow: rgb(67 255 106 / 30%);
+  --accent-4: rgb(67 255 106 / 4%);
+  --accent-12: rgb(67 255 106 / 12%);
+  --accent-16: rgb(67 255 106 / 16%);
+  --accent-18: rgb(67 255 106 / 18%);
+  --accent-20: rgb(67 255 106 / 20%);
+  --accent-30: rgb(67 255 106 / 30%);
+  --danger: #ff8c8c;
+  --danger-bg: rgb(255 107 107 / 8%);
+  --danger-border: rgb(255 107 107 / 35%);
+  --danger-10: rgb(255 107 107 / 10%);
+  --scanline: rgb(255 255 255 / 2%);
+  --warning: #f0c674;
+  --success: #43ff6a;
+  --control-height: 2.875rem;
+  --content-width: 65rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  color: var(--ink);
+  background: var(--bg);
   font-synthesis: none;
 }
 
 * { box-sizing: border-box; }
 
 body {
-  min-width: 320px;
+  min-width: 20rem;
   min-height: 100vh;
   margin: 0;
+  line-height: 1.5;
+  background-color: var(--bg);
   background:
-    radial-gradient(circle at 15% 10%, rgb(91 105 255 / 18%), transparent 34rem),
-    radial-gradient(circle at 85% 90%, rgb(14 202 166 / 10%), transparent 28rem),
-    #080b12;
+    radial-gradient(circle at top, var(--accent-subtle), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100vw 100vh;
+}
+
+body::after {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, var(--scanline) 0, var(--scanline) 1px, transparent 1px, transparent 3px);
+  opacity: 0.18;
 }
 
 button,
 input,
 select { font: inherit; }
 
-button { cursor: pointer; }
+button,
+input,
+select { min-height: var(--control-height); }
+
+button { cursor: pointer; letter-spacing: 0.02em; }
 button:disabled { cursor: wait; opacity: 0.6; }
+
+::selection { color: var(--bg); background: var(--accent); }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

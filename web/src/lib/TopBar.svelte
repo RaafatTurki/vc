@@ -18,57 +18,64 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--line);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
   }
 
   .brand {
     display: inline-flex;
-    gap: 10px;
+    gap: var(--space-2);
     align-items: center;
     color: inherit;
-    font-weight: 750;
-    letter-spacing: -0.02em;
+    font-size: 0.78rem;
+    font-weight: 600;
     text-decoration: none;
   }
 
   .brand-mark {
-    width: 27px;
-    height: 20px;
-    border-radius: 7px;
-    background: linear-gradient(135deg, #7180ff, #a96cff);
-    box-shadow: 0 0 24px rgb(113 128 255 / 45%);
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1px solid var(--accent);
+    border-radius: 0;
+    background: var(--accent-12);
+    box-shadow: 0 0 16px var(--accent-glow);
   }
 
   .brand-mark::after {
     display: block;
     width: 0;
     height: 0;
-    margin: 5px 0 0 9px;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 8px solid white;
+    margin: 4px 0 0 6px;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid var(--accent);
     content: "";
   }
 
   .status {
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
     align-items: center;
-    padding: 8px 12px;
-    border: 1px solid #242a38;
-    border-radius: 999px;
-    color: #a9b0c0;
-    background: rgb(13 17 27 / 76%);
-    font-size: 0.8rem;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .status-dot {
-    width: 7px;
-    height: 7px;
+    width: 0.4375rem;
+    height: 0.4375rem;
     border-radius: 50%;
-    background: #778095;
+    background: var(--muted);
   }
 
-  .status[data-state="connecting"] .status-dot { background: #f5b942; box-shadow: 0 0 10px #f5b942; }
-  .status[data-state="connected"] .status-dot { background: #21d6a1; box-shadow: 0 0 10px #21d6a1; }
-  .status[data-state="error"] .status-dot { background: #ff647c; box-shadow: 0 0 10px #ff647c; }
+  .status[data-state="connecting"] .status-dot { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+  .status[data-state="connected"] .status-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
+  .status[data-state="error"] .status-dot { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 </style>

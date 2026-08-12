@@ -1123,16 +1123,17 @@
 
 <style>
   .shell {
-    width: min(1180px, calc(100% - 32px));
+    width: min(var(--content-width), calc(100% - 2.5rem));
     min-height: 100vh;
     margin: 0 auto;
-    padding: 24px 0 40px;
+    padding: 2.25rem 0 6rem;
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 47.5em) {
     .shell {
-      width: min(100% - 22px, 1180px);
-      padding-top: 17px;
+      width: min(var(--content-width), calc(100% - 2rem));
+      padding-top: 1.75rem;
+      padding-bottom: 4.5rem;
     }
   }
 </style>

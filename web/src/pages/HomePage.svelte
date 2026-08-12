@@ -28,9 +28,11 @@
 
 <section aria-labelledby="setupTitle">
   <div>
-    <p class="eyebrow">Private by design</p>
-    <h1 id="setupTitle">Start a Vivid call</h1>
+    <h1 >Simple</h1>
+    <h1 >Secure</h1>
+    <h1 class="accent">Vivid</h1>
     <p class="intro">Create a room, share its link, and talk directly from browser to browser.</p>
+    <p class="eyebrow">Private by design</p>
   </div>
 
   <form onsubmit={onJoin} novalidate>
@@ -78,15 +80,15 @@
 <style>
   section {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
-    gap: clamp(48px, 9vw, 130px);
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 1fr);
+    gap: clamp(3rem, 9vw, 8.125rem);
     align-items: center;
-    min-height: calc(100vh - 100px);
+    min-height: calc(100svh - 6.25rem);
   }
 
   .eyebrow {
-    margin: 0 0 12px;
-    color: #8f9cff;
+    margin: 0 0 var(--space-3);
+    color: var(--accent);
     font-size: 0.76rem;
     font-weight: 800;
     letter-spacing: 0.14em;
@@ -94,98 +96,107 @@
   }
 
   h1 {
-    max-width: 760px;
+    max-width: 47.5rem;
     margin: 0;
     font-size: clamp(2.7rem, 7vw, 6.5rem);
     line-height: 0.95;
-    letter-spacing: -0.065em;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+  }
+
+  h1.accent {
+    color: var(--accent);
   }
 
   .intro {
-    max-width: 590px;
-    margin: 28px 0 0;
-    color: #a9b0c0;
+    max-width: 36.875rem;
+    margin: 1.75rem 0 0;
+    color: var(--muted);
     font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.65;
   }
 
   form {
-    padding: 28px;
-    border: 1px solid #242a38;
-    border-radius: 24px;
-    background: rgb(17 22 34 / 78%);
-    box-shadow: 0 26px 80px rgb(0 0 0 / 28%);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--accent-4);
     backdrop-filter: blur(20px);
   }
 
   label {
     display: block;
-    margin-bottom: 9px;
-    color: #c8cdda;
+    margin-bottom: 0.5625rem;
+    color: var(--muted);
     font-size: 0.84rem;
     font-weight: 650;
   }
 
   input {
     width: 100%;
+    height: var(--control-height);
+    min-height: var(--control-height);
     min-width: 0;
-    padding: 13px 14px;
-    border: 1px solid #303748;
-    border-radius: 12px;
+    padding: 0 0.875rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
     outline: none;
-    color: #f5f7fb;
-    background: #0c1019;
+    color: var(--ink);
+    background: var(--bg);
   }
 
-  input:focus { border-color: #7583ff; box-shadow: 0 0 0 3px rgb(117 131 255 / 14%); }
-  .form-field + .form-field { margin-top: 18px; }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
+  .form-field + .form-field { margin-top: 1.125rem; }
 
   .room-entry {
     display: flex;
-    gap: 10px;
+    gap: var(--space-2);
     align-items: center;
   }
 
   fieldset {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 9px;
-    margin: 20px 0 0;
+    gap: 0.5625rem;
+    margin: 1.25rem 0 0;
     padding: 0;
     border: 0;
   }
 
-  legend { margin-bottom: 9px; color: #c8cdda; font-size: 0.84rem; font-weight: 650; }
+  legend { margin-bottom: 0.5625rem; color: var(--muted); font-size: 0.84rem; font-weight: 650; }
 
   .media-choice {
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
     align-items: center;
-    min-height: 42px;
-    padding: 0 11px;
-    border: 1px solid #354052;
-    border-radius: 10px;
-    color: #dfe3ed;
-    background: #1b2230;
+    height: var(--control-height);
+    min-height: var(--control-height);
+    padding: 0 0.6875rem;
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--accent-soft);
     font-size: 0.78rem;
     font-weight: 680;
+    white-space: nowrap;
   }
 
-  .media-choice :global(svg) { width: 16px; height: 16px; }
-  .media-choice[aria-pressed="false"] { color: #ff9aaa; border-color: #59303a; background: #351f27; }
-  details { margin-top: 20px; color: #a9b0c0; font-size: 0.86rem; }
-  summary { margin-bottom: 15px; cursor: pointer; }
-  .error { margin: 15px 0 0; color: #ff8295; font-size: 0.86rem; line-height: 1.5; }
+  .media-choice :global(svg) { width: 1rem; height: 1rem; }
+  .media-choice[aria-pressed="false"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-bg); }
+  details { margin-top: 1.25rem; color: var(--muted); font-size: 0.86rem; }
+  summary { margin-bottom: 0.9375rem; cursor: pointer; }
+  .error { margin: 0.9375rem 0 0; color: var(--danger); font-size: 0.86rem; line-height: 1.5; }
 
-  @media (max-width: 760px) {
+  @media (max-width: 47.5em) {
     section {
       grid-template-columns: 1fr;
-      gap: 42px;
+      gap: clamp(2rem, 8vw, 2.625rem);
       align-content: center;
-      padding: 55px 0;
+      padding: clamp(2.5rem, 10vh, 4rem) 0;
     }
 
-    form { padding: 20px; }
+    form { padding: clamp(1.125rem, 5vw, 1.5rem); }
     .room-entry { align-items: stretch; flex-direction: column; }
   }
 </style>

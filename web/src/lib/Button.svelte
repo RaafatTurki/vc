@@ -28,27 +28,29 @@
 <style>
   button {
     display: inline-flex;
-    gap: 8px;
+    gap: var(--space-2);
     align-items: center;
     justify-content: center;
-    min-height: 46px;
-    padding: 0 17px;
-    border: 1px solid #303748;
-    border-radius: 12px;
-    color: #f8f9fd;
-    background: #171c28;
+    height: var(--control-height);
+    min-height: var(--control-height);
+    padding: 0 1.0625rem;
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    color: var(--ink);
+    background: var(--accent-soft);
     font-weight: 720;
     white-space: nowrap;
   }
 
-  button:hover:not(:disabled) { filter: brightness(1.12); }
-  button.compact { min-height: 40px; }
+  button:hover:not(:disabled) { border-color: var(--accent-border-strong); color: var(--accent); background: var(--accent-subtle); }
+  button.compact { min-height: 2.5rem; height: 2.5rem; }
 
   button.primary {
     width: 100%;
-    margin-top: 22px;
-    border: 0;
-    background: linear-gradient(135deg, #6979ff, #9467ed);
-    box-shadow: 0 10px 30px rgb(105 121 255 / 24%);
+    margin-top: 1.375rem;
+    border: 1px solid var(--accent);
+    color: var(--bg);
+    background: var(--accent);
+    box-shadow: 0 0 22px var(--accent-16);
   }
 </style>

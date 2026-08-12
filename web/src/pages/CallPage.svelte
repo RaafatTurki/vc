@@ -116,6 +116,6 @@
 </section>
 
 <style>
-  section { padding-top: clamp(50px, 8vh, 90px); }
-  p { margin: 12px auto 0; color: #ff9aaa; font-size: 0.84rem; text-align: center; }
+  section { padding-top: clamp(2.375rem, 7vh, 4.5rem); }
+  p { margin: var(--space-3) auto 0; color: var(--danger); font-size: 0.84rem; text-align: center; }
 </style>

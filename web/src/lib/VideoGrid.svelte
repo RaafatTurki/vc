@@ -52,43 +52,43 @@
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 26.25rem), 1fr));
+    gap: var(--space-3);
   }
 
   .empty-room {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    min-height: 280px;
-    border: 1px solid #242a38;
-    border-radius: 20px;
-    color: #778095;
-    background: #111622;
+    min-height: clamp(12rem, 32vw, 17.5rem);
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+    color: var(--muted);
+    background: var(--bg-soft);
     text-align: center;
     aspect-ratio: 16 / 10;
   }
 
-  .empty-room strong { color: #cbd0dc; }
+  .empty-room strong { color: var(--accent); font-weight: 500; }
 
   .waiting-ring {
-    width: 38px;
-    height: 38px;
-    margin-bottom: 10px;
-    border: 3px solid #2d3444;
-    border-top-color: #7d89ff;
+    width: 2.375rem;
+    height: 2.375rem;
+    margin-bottom: var(--space-3);
+    border: 2px solid var(--accent-20);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 1.3s linear infinite;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  @media (max-width: 760px) {
-    .empty-room { min-height: 210px; }
+  @media (max-width: 47.5em) {
+    .empty-room { min-height: clamp(10rem, 52vw, 14rem); }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -19,15 +19,17 @@
 <style>
   header {
     display: flex;
-    gap: 24px;
+    gap: var(--space-6);
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--line);
   }
 
   p {
-    margin: 0 0 12px;
-    color: #8f9cff;
+    margin: 0 0 var(--space-3);
+    color: var(--accent);
     font-size: 0.76rem;
     font-weight: 800;
     letter-spacing: 0.14em;
@@ -35,17 +37,18 @@
   }
 
   h1 {
-    max-width: 650px;
+    max-width: 40.625rem;
     margin: 0;
     overflow: hidden;
     font-size: clamp(2rem, 5vw, 4.3rem);
     line-height: 1;
-    letter-spacing: -0.065em;
+    letter-spacing: -0.045em;
+    font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  @media (max-width: 760px) {
+  @media (max-width: 47.5em) {
     header { align-items: stretch; flex-direction: column; }
   }
 </style>

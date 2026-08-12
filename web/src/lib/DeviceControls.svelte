@@ -54,42 +54,44 @@
   .device-controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin: 18px auto 0;
-    padding: 14px;
-    border: 1px solid #242a38;
-    border-radius: 16px;
-    background: rgb(13 17 27 / 72%);
+    gap: var(--space-3);
+    margin: 1.125rem auto 0;
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--surface);
   }
 
-  label { min-width: 0; margin: 0; color: #c8cdda; font-size: 0.84rem; font-weight: 650; }
+  label { min-width: 0; margin: 0; color: var(--muted); font-size: 0.84rem; font-weight: 650; }
 
   label > span {
     display: flex;
-    gap: 7px;
+    gap: 0.4375rem;
     align-items: center;
-    margin-bottom: 7px;
+    margin-bottom: 0.4375rem;
   }
 
-  label > span :global(svg) { width: 15px; height: 15px; }
+  label > span :global(svg) { width: 0.9375rem; height: 0.9375rem; }
 
   select {
     width: 100%;
+    height: var(--control-height);
+    min-height: var(--control-height);
     min-width: 0;
-    padding: 10px 36px 10px 11px;
-    border: 1px solid #303748;
-    border-radius: 10px;
+    padding: 0.625rem 2.25rem 0.625rem 0.6875rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
     outline: none;
     overflow: hidden;
-    color: #eef0f6;
-    background: #111622;
+    color: var(--ink);
+    background: var(--bg);
     text-overflow: ellipsis;
   }
 
-  select:focus { border-color: #7583ff; box-shadow: 0 0 0 3px rgb(117 131 255 / 14%); }
+  select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
   select:disabled { cursor: default; opacity: 0.65; }
 
-  @media (max-width: 760px) {
+  @media (max-width: 47.5em) {
     .device-controls { grid-template-columns: 1fr; }
   }
 </style>
