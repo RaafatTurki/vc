@@ -125,7 +125,6 @@
     text-align: left;
   }
 
-  .trigger:hover:not(:disabled),
   .trigger:focus-visible,
   .trigger.open { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
   .trigger:disabled { cursor: default; opacity: 0.65; }
@@ -162,7 +161,11 @@
     white-space: normal;
   }
 
-  .option:hover,
   .option.focused { color: var(--ink); background: var(--accent-soft); }
   .option.selected { color: var(--accent); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .trigger:hover:not(:disabled) { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
+    .option:hover { color: var(--ink); background: var(--accent-soft); }
+  }
 </style>

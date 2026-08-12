@@ -264,7 +264,10 @@
     backdrop-filter: blur(12px);
   }
 
-  .tile-fullscreen:hover { color: var(--accent); background: var(--accent-subtle); }
+  @media (hover: hover) and (pointer: fine) {
+    .tile-fullscreen:hover { color: var(--accent); background: var(--accent-subtle); }
+    .tile-mute:hover { color: var(--accent); }
+  }
   .tile-fullscreen :global(svg) { width: 100%; height: 100%; }
 
   .video-label {
@@ -328,7 +331,6 @@
     backdrop-filter: blur(12px);
   }
 
-  .tile-mute:hover { color: var(--accent); }
   .tile-mute[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
   .tile-mute :global(.tile-mute-icon) { width: 0.875rem; height: 0.875rem; }
 

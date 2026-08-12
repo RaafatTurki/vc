@@ -96,10 +96,19 @@
     white-space: nowrap;
   }
 
-  button:hover:not(:disabled) { color: var(--accent); background: var(--accent-subtle); }
   button[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-bg); }
   button.danger { border-color: var(--danger-border); color: var(--danger); background: var(--danger-10); }
   button :global(svg) { width: 1.125rem; height: 1.125rem; }
+
+  @media (hover: hover) and (pointer: fine) {
+    button:hover:not(:disabled) { color: var(--accent); background: var(--accent-subtle); }
+    button.danger:hover:not(:disabled),
+    button[aria-pressed="true"]:hover:not(:disabled) {
+      color: var(--danger);
+      border-color: var(--danger-border);
+      background: var(--danger-10);
+    }
+  }
 
   @media (max-width: 47.5em) {
     .controls { gap: var(--space-1); width: fit-content; padding: var(--space-2); justify-content: flex-start; }
