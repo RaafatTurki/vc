@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { LogOut, Mic, MicOff, ScreenShare, ScreenShareOff, SwitchCamera, Video, VideoOff } from "@lucide/svelte"
+  import { AudioLines, LogOut, Mic, MicOff, ScreenShare, ScreenShareOff, SwitchCamera, Video, VideoOff } from "@lucide/svelte"
   import Popup from "./Popup.svelte"
 
   interface Props {
     microphoneMuted: boolean
+    noiseCancellationEnabled: boolean
     cameraStopped: boolean
     canShareScreen: boolean
     screenSharing: boolean
@@ -11,6 +12,7 @@
     canSwitchCamera: boolean
     switchingCamera: boolean
     onToggleMicrophone: () => void | Promise<void>
+    onToggleNoiseCancellation: () => void | Promise<void>
     onToggleCamera: () => void | Promise<void>
     onToggleScreenShare: () => void | Promise<void>
     onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
@@ -20,6 +22,7 @@
 
   let {
     microphoneMuted,
+    noiseCancellationEnabled,
     cameraStopped,
     canShareScreen,
     screenSharing,
@@ -27,6 +30,7 @@
     canSwitchCamera,
     switchingCamera,
     onToggleMicrophone,
+    onToggleNoiseCancellation,
     onToggleCamera,
     onToggleScreenShare,
     onStartScreenShare,
@@ -50,6 +54,10 @@
   <button type="button" aria-label={cameraStopped ? "Start camera" : "Stop camera"} aria-pressed={cameraStopped} onclick={onToggleCamera}>
     {#if cameraStopped}<VideoOff aria-hidden="true" />{:else}<Video aria-hidden="true" />{/if}
     <span>{cameraStopped ? "Start video" : "Stop video"}</span>
+  </button>
+  <button type="button" aria-label={noiseCancellationEnabled ? "Disable noise cancellation" : "Enable noise cancellation"} aria-pressed={!noiseCancellationEnabled} onclick={onToggleNoiseCancellation}>
+    <AudioLines aria-hidden="true" />
+    <span>{noiseCancellationEnabled ? "Noise canceling" : "Noise off"}</span>
   </button>
   {#if canShareScreen}
     <div class="screen-tools">

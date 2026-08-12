@@ -12,6 +12,7 @@
     participantName: string
     deviceType: DeviceType
     microphoneMuted: boolean
+    noiseCancellationEnabled: boolean
     cameraStopped: boolean
     cameraFacing: VideoFacingModeEnum
     screenSharing: boolean
@@ -33,6 +34,7 @@
     onAudioDeviceChange: (deviceID: string) => void | Promise<void>
     onVideoDeviceChange: (deviceID: string) => void | Promise<void>
     onToggleMicrophone: () => void | Promise<void>
+    onToggleNoiseCancellation: () => void | Promise<void>
     onToggleCamera: () => void | Promise<void>
     onToggleScreenShare: () => void | Promise<void>
     onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
@@ -47,6 +49,7 @@
     participantName,
     deviceType,
     microphoneMuted,
+    noiseCancellationEnabled,
     cameraStopped,
     cameraFacing,
     screenSharing,
@@ -68,6 +71,7 @@
     onAudioDeviceChange,
     onVideoDeviceChange,
     onToggleMicrophone,
+    onToggleNoiseCancellation,
     onToggleCamera,
     onToggleScreenShare,
     onStartScreenShare,
@@ -102,6 +106,7 @@
   />
   <CallControls
     {microphoneMuted}
+    {noiseCancellationEnabled}
     {cameraStopped}
     {canShareScreen}
     {screenSharing}
@@ -109,6 +114,7 @@
     {canSwitchCamera}
     {switchingCamera}
     {onToggleMicrophone}
+    {onToggleNoiseCancellation}
     {onToggleCamera}
     {onToggleScreenShare}
     {onStartScreenShare}

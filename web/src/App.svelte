@@ -16,6 +16,7 @@
     videoConstraints,
   } from "./lib/call"
   import type { DeviceType, MediaDeviceOption, Peer, PeerState } from "./lib/types"
+  import { NoiseSuppression } from "./lib/noiseSuppression"
 
   interface SignalMessage {
     type: string
@@ -44,6 +45,7 @@
   let joinWithAudio = $state(true)
   let joinWithVideo = $state(true)
   let microphoneMuted = $state(false)
+  let noiseCancellationEnabled = $state(true)
   let cameraStopped = $state(false)
   let cameraFacing = $state<VideoFacingModeEnum>("user")
   let canSwitchCamera = $state(false)
@@ -73,6 +75,8 @@
   let displayTrack: MediaStreamTrack | null = null
   let displayStream = $state<MediaStream | null>(null)
   let mixedAudioTrack: MediaStreamTrack | null = null
+  let processedAudioTrack: MediaStreamTrack | null = null
+  let noiseSuppression: NoiseSuppression | null = null
   let screenAudioContext: AudioContext | null = null
   let screenAudioNodes: AudioNode[] = []
   let installPrompt: BeforeInstallPromptEvent | null = null
@@ -176,6 +180,7 @@
 
     try {
       localStream = await acquireCallMedia()
+      await updateNoiseCancellation()
       cameraTrack = localStream.getVideoTracks()[0] || null
       microphoneMuted = !joinWithAudio
       cameraStopped = !joinWithVideo
@@ -204,7 +209,7 @@
     if (!joinWithAudio && !joinWithVideo) return new MediaStream()
     try {
       return await navigator.mediaDevices.getUserMedia({
-        audio: joinWithAudio,
+        audio: joinWithAudio ? microphoneConstraints() : false,
         video: joinWithVideo ? videoConstraints(cameraFacing) : false,
       })
     } catch (error) {
@@ -212,7 +217,16 @@
         throw error
       }
       await new Promise(resolve => window.setTimeout(resolve, 250))
-      return navigator.mediaDevices.getUserMedia({ audio: joinWithAudio, video: joinWithVideo })
+      return navigator.mediaDevices.getUserMedia({ audio: joinWithAudio ? microphoneConstraints() : false, video: joinWithVideo })
+    }
+  }
+
+  function microphoneConstraints(deviceID = ""): MediaTrackConstraints {
+    return {
+      autoGainControl: true,
+      echoCancellation: true,
+      noiseSuppression: false,
+      ...(deviceID ? { deviceId: { exact: deviceID } } : {}),
     }
   }
 
@@ -340,7 +354,7 @@
     peers.set(peerID, peer)
 
     for (const track of stream.getTracks()) {
-      const outboundTrack = track.kind === "audio" && mixedAudioTrack ? mixedAudioTrack : track
+      const outboundTrack = track.kind === "audio" ? mixedAudioTrack || processedAudioTrack || track : track
       const sender = connection.addTrack(outboundTrack, stream)
       if (track.kind === "video") peer.cameraSender = sender
       if (track.kind === "audio") peer.microphoneSender = sender
@@ -562,10 +576,14 @@
     displayTrack?.stop()
     mixedAudioTrack?.stop()
     screenAudioContext?.close().catch(() => {})
+    processedAudioTrack?.stop()
+    noiseSuppression?.stop().catch(() => {})
     cameraTrack = null
     displayTrack = null
     displayStream = null
     mixedAudioTrack = null
+    processedAudioTrack = null
+    noiseSuppression = null
     screenAudioContext = null
     screenAudioNodes = []
     screenSharing = false
@@ -615,19 +633,18 @@
   async function enableMicrophone(): Promise<void> {
     cameraError = ""
     try {
-      const audio = selectedAudioDeviceID
-        ? { deviceId: { exact: selectedAudioDeviceID } }
-        : true
+      const audio = microphoneConstraints(selectedAudioDeviceID)
       const stream = await navigator.mediaDevices.getUserMedia({ audio, video: false })
       const track = stream.getAudioTracks()[0]
       if (!track) throw new Error("No microphone was available.")
       if (!localStream) throw new Error("The call is no longer active.")
       track.enabled = true
+      if (noiseCancellationEnabled) await updateNoiseCancellation(track)
       localStream = new MediaStream([track, ...localStream.getVideoTracks()])
       let addedSender = false
       for (const peer of peers.values()) {
         if (peer.microphoneSender) {
-          await peer.microphoneSender.replaceTrack(track)
+          await peer.microphoneSender.replaceTrack(mixedAudioTrack || processedAudioTrack || track)
         } else {
           peer.microphoneSender = peer.connection.addTrack(track, localStream)
           addedSender = true
@@ -859,7 +876,7 @@
   }
 
   async function startScreenAudioMix(sharedStream: MediaStream): Promise<boolean> {
-    const microphoneTrack = localStream?.getAudioTracks()[0]
+    const microphoneTrack = processedAudioTrack || localStream?.getAudioTracks()[0]
     const screenAudioTrack = sharedStream.getAudioTracks()[0]
     if (!screenAudioTrack) return false
 
@@ -892,7 +909,7 @@
   }
 
   async function stopScreenAudioMix(replaceSender = true): Promise<void> {
-    const microphoneTrack = localStream?.getAudioTracks()[0] || null
+    const microphoneTrack = processedAudioTrack || localStream?.getAudioTracks()[0] || null
     if (replaceSender && mixedAudioTrack) {
       await Promise.all([...peers.values()].map(peer => (
         peer.microphoneSender?.replaceTrack(microphoneTrack)
@@ -915,7 +932,7 @@
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { deviceId: { exact: deviceID } },
+        audio: microphoneConstraints(deviceID),
         video: false,
       })
       newTrack = stream.getAudioTracks()[0]
@@ -923,12 +940,13 @@
 
       oldTrack = localStream.getAudioTracks()[0]
       newTrack.enabled = oldTrack?.enabled ?? true
+      if (noiseCancellationEnabled) await updateNoiseCancellation(newTrack)
       if (mixedAudioTrack) await stopScreenAudioMix(false)
       localStream = new MediaStream([newTrack, ...localStream.getVideoTracks()])
 
       let mixed = false
       if (screenSharing && displayStream) mixed = await startScreenAudioMix(displayStream)
-      if (!mixed) await replaceAudioTrack(newTrack)
+      if (!mixed) await replaceAudioTrack(processedAudioTrack || newTrack)
       oldTrack?.stop()
       selectedAudioDeviceID = newTrack.getSettings().deviceId || deviceID
       await refreshMediaDevices()
@@ -992,6 +1010,36 @@
     }
     await Promise.all(replacements)
     if (addedSender) await renegotiatePeers()
+  }
+
+  async function updateNoiseCancellation(track = localStream?.getAudioTracks()[0] || null): Promise<void> {
+    if (!track || !noiseCancellationEnabled) return
+    try {
+      noiseSuppression ??= new NoiseSuppression()
+      processedAudioTrack?.stop()
+      processedAudioTrack = await noiseSuppression.start(track)
+    } catch (error) {
+      noiseCancellationEnabled = false
+      processedAudioTrack?.stop()
+      processedAudioTrack = null
+      await noiseSuppression?.stop()
+      noiseSuppression = null
+      console.warn("Noise cancellation is unavailable; using the microphone directly.", error)
+    }
+  }
+
+  async function toggleNoiseCancellation(): Promise<void> {
+    noiseCancellationEnabled = !noiseCancellationEnabled
+    if (noiseCancellationEnabled) {
+      await updateNoiseCancellation()
+    } else {
+      processedAudioTrack?.stop()
+      processedAudioTrack = null
+      await noiseSuppression?.stop()
+      noiseSuppression = null
+    }
+    if (screenSharing && displayStream) await startScreenAudioMix(displayStream)
+    else await replaceAudioTrack(noiseCancellationEnabled ? processedAudioTrack : localStream?.getAudioTracks()[0] || null)
   }
 
   async function refreshMediaDevices(): Promise<void> {
@@ -1121,6 +1169,7 @@
       {participantName}
       {deviceType}
       {microphoneMuted}
+      {noiseCancellationEnabled}
       {cameraStopped}
       {cameraFacing}
       {screenSharing}
@@ -1142,6 +1191,7 @@
       onAudioDeviceChange={changeAudioDevice}
       onVideoDeviceChange={changeVideoDevice}
       onToggleMicrophone={toggleMicrophone}
+      onToggleNoiseCancellation={toggleNoiseCancellation}
       onToggleCamera={toggleCamera}
       onToggleScreenShare={toggleScreenShare}
       onStartScreenShare={startScreenShare}
