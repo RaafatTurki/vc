@@ -35,6 +35,7 @@
     onToggleMicrophone: () => void | Promise<void>
     onToggleCamera: () => void | Promise<void>
     onToggleScreenShare: () => void | Promise<void>
+    onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
     onSwitchCamera: () => void | Promise<void>
     onLeave: () => void
   }
@@ -69,6 +70,7 @@
     onToggleMicrophone,
     onToggleCamera,
     onToggleScreenShare,
+    onStartScreenShare,
     onSwitchCamera,
     onLeave,
   }: Props = $props()
@@ -109,6 +111,7 @@
     {onToggleMicrophone}
     {onToggleCamera}
     {onToggleScreenShare}
+    {onStartScreenShare}
     {onSwitchCamera}
     {onLeave}
   />

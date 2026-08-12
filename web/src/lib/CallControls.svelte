@@ -1,5 +1,6 @@
 <script lang="ts">
   import { LogOut, Mic, MicOff, ScreenShare, ScreenShareOff, SwitchCamera, Video, VideoOff } from "@lucide/svelte"
+  import Popup from "./Popup.svelte"
 
   interface Props {
     microphoneMuted: boolean
@@ -12,6 +13,7 @@
     onToggleMicrophone: () => void | Promise<void>
     onToggleCamera: () => void | Promise<void>
     onToggleScreenShare: () => void | Promise<void>
+    onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
     onSwitchCamera: () => void | Promise<void>
     onLeave: () => void
   }
@@ -27,9 +29,17 @@
     onToggleMicrophone,
     onToggleCamera,
     onToggleScreenShare,
+    onStartScreenShare,
     onSwitchCamera,
     onLeave,
   }: Props = $props()
+
+  let frameRatePopupOpen = $state(false)
+
+  async function chooseFrameRate(value: string) {
+    frameRatePopupOpen = false
+    await onStartScreenShare(Number(value) as 30 | 60 | 120)
+  }
 </script>
 
 <div class="controls" aria-label="Call controls">
@@ -42,10 +52,19 @@
     <span>{cameraStopped ? "Start video" : "Stop video"}</span>
   </button>
   {#if canShareScreen}
-    <button type="button" aria-label={sharingScreen ? "Starting screen share" : screenSharing ? "Stop screen sharing" : "Share screen"} aria-pressed={screenSharing} disabled={sharingScreen} onclick={onToggleScreenShare}>
-      {#if screenSharing}<ScreenShareOff aria-hidden="true" />{:else}<ScreenShare aria-hidden="true" />{/if}
-      <span>{sharingScreen ? "Starting…" : screenSharing ? "Stop sharing" : "Share screen"}</span>
-    </button>
+    <div class="screen-tools">
+      {#if screenSharing}
+        <button type="button" aria-label="Stop screen sharing" aria-pressed="true" disabled={sharingScreen} onclick={onToggleScreenShare}>
+          <ScreenShareOff aria-hidden="true" />
+          <span>Stop sharing</span>
+        </button>
+      {:else}
+        <button type="button" aria-label="Choose screen share frame rate" disabled={sharingScreen} onclick={() => frameRatePopupOpen = true}>
+          <ScreenShare aria-hidden="true" />
+          <span>Share screen</span>
+        </button>
+      {/if}
+    </div>
   {/if}
   {#if canSwitchCamera}
     <button type="button" aria-label={switchingCamera ? "Switching camera" : "Switch camera"} disabled={switchingCamera} onclick={onSwitchCamera}>
@@ -58,6 +77,14 @@
     <span>Leave</span>
   </button>
 </div>
+
+<Popup
+  open={frameRatePopupOpen}
+  title="Screen share quality"
+  options={[{ value: "30", label: "Share at 30 FPS" }, { value: "60", label: "Share at 60 FPS" }, { value: "120", label: "Share at 120 FPS" }]}
+  onSelect={chooseFrameRate}
+  onClose={() => frameRatePopupOpen = false}
+/>
 
 <style>
   .controls {
@@ -99,6 +126,8 @@
   button[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-bg); }
   button.danger { border-color: var(--danger-border); color: var(--danger); background: var(--danger-10); }
   button :global(svg) { width: 1.125rem; height: 1.125rem; }
+
+  .screen-tools { display: flex; gap: var(--space-1); align-items: center; }
 
   @media (hover: hover) and (pointer: fine) {
     button:hover:not(:disabled) { color: var(--accent); background: var(--accent-subtle); }

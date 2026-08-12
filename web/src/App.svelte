@@ -761,12 +761,10 @@
   async function toggleScreenShare(): Promise<void> {
     if (screenSharing) {
       await stopScreenShare()
-    } else {
-      await startScreenShare()
     }
   }
 
-  async function startScreenShare(): Promise<void> {
+  async function startScreenShare(frameRate: 30 | 60 | 120): Promise<void> {
     if (!canShareScreen || sharingScreen || !localStream) return
     sharingScreen = true
     cameraError = ""
@@ -779,7 +777,9 @@
         systemAudio: "include"
         windowAudio: "system"
       } = {
-        video: true,
+        video: {
+          frameRate: { ideal: frameRate, max: frameRate },
+        },
         audio: {
           echoCancellation: false,
           noiseSuppression: false,
@@ -1144,6 +1144,7 @@
       onToggleMicrophone={toggleMicrophone}
       onToggleCamera={toggleCamera}
       onToggleScreenShare={toggleScreenShare}
+      onStartScreenShare={startScreenShare}
       onSwitchCamera={switchCamera}
       onLeave={leaveCall}
     />
