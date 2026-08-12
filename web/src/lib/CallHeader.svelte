@@ -7,8 +7,7 @@
 
 <header>
   <div>
-    <p>Current room</p>
-    <h1>{roomID}</h1>
+    <h1><span>room id:</span> {roomID}</h1>
   </div>
   <Button compact onclick={onCopy}>
     <Copy size={17} aria-hidden="true" />
@@ -27,20 +26,17 @@
     border-bottom: 1px solid var(--line);
   }
 
-  p {
+  span {
     margin: 0 0 var(--space-3);
     color: var(--accent);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
   h1 {
-    max-width: 40.625rem;
+    max-width: 24rem;
     margin: 0;
     overflow: hidden;
-    font-size: clamp(2rem, 5vw, 4.3rem);
+    font-size: clamp(1.25rem, 3vw, 2rem);
     line-height: 1;
     letter-spacing: -0.045em;
     font-weight: 500;

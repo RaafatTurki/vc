@@ -32,8 +32,8 @@
   --scanline: rgb(255 255 255 / 2%);
   --warning: #f0c674;
   --success: #43ff6a;
-  --control-height: 2.875rem;
-  --overlay-height: 1.9375rem;
+  --control-height: 2.75rem;
+  --overlay-height: 2rem;
   --content-width: 65rem;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -47,7 +47,32 @@
   font-synthesis: none;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-color: var(--accent) var(--bg-soft);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 0.45rem;
+  height: 0.45rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 0.1rem solid var(--bg-soft);
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--success);
+}
 
 body {
   min-width: 20rem;
@@ -55,9 +80,7 @@ body {
   margin: 0;
   line-height: 1.5;
   background-color: var(--bg);
-  background:
-    radial-gradient(circle at top, var(--accent-subtle), transparent 55%),
-    var(--bg);
+  background: radial-gradient(circle at top, var(--accent-subtle), transparent 55%), var(--bg);
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: 100vw 100vh;
