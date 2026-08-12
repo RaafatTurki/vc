@@ -2,6 +2,7 @@ name: vivid
 
 services:
   backend:
+    container_name: vivid-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -25,6 +26,7 @@ services:
       - no-new-privileges:true
 
   coturn:
+    container_name: vivid-coturn
     image: coturn/coturn:4.15.0-r0-alpine
     restart: unless-stopped
     init: true
@@ -49,6 +51,7 @@ services:
       - no-new-privileges:true
 
   web:
+    container_name: vivid-web
     build:
       context: ./web
       dockerfile: Dockerfile
