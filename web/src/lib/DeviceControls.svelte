@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Mic, Video } from "@lucide/svelte"
+  import Dropdown from "./Dropdown.svelte"
   import type { MediaDeviceOption } from "./types"
 
   interface Props {
@@ -30,21 +31,25 @@
     {#if audioDevices.length}
       <label>
         <span><Mic aria-hidden="true" /> Microphone</span>
-        <select bind:value={selectedAudioDeviceID} disabled={switchingAudioDevice || audioDevices.length < 2} onchange={() => onAudioChange(selectedAudioDeviceID)}>
-          {#each audioDevices as device (device.deviceId)}
-            <option value={device.deviceId}>{device.label}</option>
-          {/each}
-        </select>
+        <Dropdown
+          options={audioDevices.map(device => ({ value: device.deviceId, label: device.label }))}
+          bind:value={selectedAudioDeviceID}
+          label="Microphone"
+          disabled={switchingAudioDevice || audioDevices.length < 2}
+          onchange={onAudioChange}
+        />
       </label>
     {/if}
     {#if videoDevices.length}
       <label>
         <span><Video aria-hidden="true" /> Camera</span>
-        <select bind:value={selectedVideoDeviceID} disabled={switchingVideoDevice || videoDevices.length < 2} onchange={() => onVideoChange(selectedVideoDeviceID)}>
-          {#each videoDevices as device (device.deviceId)}
-            <option value={device.deviceId}>{device.label}</option>
-          {/each}
-        </select>
+        <Dropdown
+          options={videoDevices.map(device => ({ value: device.deviceId, label: device.label }))}
+          bind:value={selectedVideoDeviceID}
+          label="Camera"
+          disabled={switchingVideoDevice || videoDevices.length < 2}
+          onchange={onVideoChange}
+        />
       </label>
     {/if}
   </div>
@@ -72,24 +77,6 @@
   }
 
   label > span :global(svg) { width: 0.9375rem; height: 0.9375rem; }
-
-  select {
-    width: 100%;
-    height: var(--control-height);
-    min-height: var(--control-height);
-    min-width: 0;
-    padding: 0.625rem 2.25rem 0.625rem 0.6875rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 2px;
-    outline: none;
-    overflow: hidden;
-    color: var(--ink);
-    background: var(--bg);
-    text-overflow: ellipsis;
-  }
-
-  select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
-  select:disabled { cursor: default; opacity: 0.65; }
 
   @media (max-width: 47.5em) {
     .device-controls { grid-template-columns: 1fr; }
