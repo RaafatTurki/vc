@@ -1,5 +1,6 @@
 <script lang="ts">
   import { MessageCircle, Send, X } from "@lucide/svelte"
+  import { tick } from "svelte"
 
   export interface ChatMessage {
     id: string
@@ -19,6 +20,15 @@
 
   let { messages, open, unread, onSend, onToggle }: Props = $props()
   let text = $state("")
+  let messagesElement = $state<HTMLDivElement>()
+
+  $effect(() => {
+    messages.length
+    if (!open) return
+    tick().then(() => {
+      if (messagesElement) messagesElement.scrollTop = messagesElement.scrollHeight
+    })
+  })
 
   function send(event: SubmitEvent) {
     event.preventDefault()
@@ -37,7 +47,7 @@
 {#if open}
   <aside class="chat-panel" aria-label="Room chat">
     <header><strong>Chat</strong><span>{messages.length} messages</span></header>
-    <div class="messages" aria-live="polite">
+    <div bind:this={messagesElement} class="messages" aria-live="polite">
       {#if messages.length === 0}<p class="empty">No messages yet.</p>{/if}
       {#each messages as message (message.id)}
         <article class:own={message.own}>
@@ -62,7 +72,7 @@
   header span { color: var(--muted); font-size: 0.72rem; }
   .messages { overflow-y: auto; padding: var(--space-3); }
   article { width: fit-content; max-width: 90%; margin-bottom: var(--space-3); padding: 0.45rem 0.6rem; border: 1px solid var(--line-soft); background: var(--surface-faint); }
-  article.own { margin-left: auto; border-color: var(--accent-border); background: var(--accent-subtle); }
+  article.own { border-color: var(--accent-border); background: var(--accent-subtle); }
   article strong { color: var(--accent); font-size: 0.7rem; }
   article p { margin: 0.2rem 0 0; overflow-wrap: anywhere; white-space: pre-wrap; }
   .empty { color: var(--muted); font-size: 0.82rem; text-align: center; }
