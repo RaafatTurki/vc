@@ -190,6 +190,16 @@ func (c *client) readPump(hub *Hub) {
 			c.trySend(ServerMessage{Type: "error", Code: "invalid-message", Message: "expected peer metadata or a WebRTC signaling message with a target and payload"})
 			continue
 		}
+		if message.Type == messageChat {
+			if _, ok := validChatPayload(message.Payload); !ok {
+				c.trySend(ServerMessage{Type: "error", Code: "invalid-chat", Message: "chat messages must be non-empty and no longer than 4,000 characters or 16 KiB"})
+				continue
+			}
+			if err := hub.BroadcastChat(c, ChatRecord{From: c.peerID, Payload: message.Payload}); err != nil {
+				c.trySend(ServerMessage{Type: "error", Code: "chat-failed", Message: err.Error()})
+			}
+			continue
+		}
 		if message.To == c.peerID {
 			c.trySend(ServerMessage{Type: "error", Code: "invalid-target", Message: "cannot relay a message to yourself"})
 			continue

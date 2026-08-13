@@ -15,11 +15,12 @@ var (
 type Hub struct {
 	mu           sync.RWMutex
 	rooms        map[string]map[string]*client
+	chatHistory  map[string][]ChatRecord
 	maxRoomPeers int
 }
 
 func NewHub(maxRoomPeers int) *Hub {
-	return &Hub{rooms: make(map[string]map[string]*client), maxRoomPeers: maxRoomPeers}
+	return &Hub{rooms: make(map[string]map[string]*client), chatHistory: make(map[string][]ChatRecord), maxRoomPeers: maxRoomPeers}
 }
 
 func (h *Hub) Join(c *client, welcome ServerMessage) error {
@@ -41,6 +42,7 @@ func (h *Hub) Join(c *client, welcome ServerMessage) error {
 	}
 	sort.Strings(peers)
 	welcome.Peers = peers
+	welcome.ChatHistory = append([]ChatRecord(nil), h.chatHistory[c.roomID]...)
 	c.send <- welcome
 	room[c.peerID] = c
 	for _, peer := range room {
@@ -65,7 +67,32 @@ func (h *Hub) Leave(c *client) {
 	}
 	if len(room) == 0 {
 		delete(h.rooms, c.roomID)
+		delete(h.chatHistory, c.roomID)
 	}
+}
+
+func (h *Hub) BroadcastChat(from *client, record ChatRecord) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	room := h.rooms[from.roomID]
+	if room == nil || room[from.peerID] != from {
+		return ErrPeerMissing
+	}
+	history := append(h.chatHistory[from.roomID], record)
+	if len(history) > maxChatHistory {
+		history = history[len(history)-maxChatHistory:]
+	}
+	h.chatHistory[from.roomID] = history
+	for peerID, peer := range room {
+		if peerID == from.peerID {
+			continue
+		}
+		if !peer.trySend(ServerMessage{Type: messageChat, From: from.peerID, Payload: record.Payload}) {
+			return ErrPeerSlow
+		}
+	}
+	return nil
 }
 
 func (h *Hub) Relay(from *client, message ClientMessage) error {

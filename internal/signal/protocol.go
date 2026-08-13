@@ -1,6 +1,9 @@
 package signal
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"unicode/utf8"
+)
 
 const (
 	messageOffer     = "offer"
@@ -8,6 +11,10 @@ const (
 	messageCandidate = "ice-candidate"
 	messagePeerReady = "peer-ready"
 	messagePeerState = "peer-state"
+	messageChat      = "chat-message"
+	maxChatLength    = 4000
+	maxChatBytes     = 16 << 10
+	maxChatHistory   = 500
 )
 
 type ClientMessage struct {
@@ -17,15 +24,16 @@ type ClientMessage struct {
 }
 
 type ServerMessage struct {
-	Type       string          `json:"type"`
-	RoomID     string          `json:"roomId,omitempty"`
-	PeerID     string          `json:"peerId,omitempty"`
-	From       string          `json:"from,omitempty"`
-	Peers      []string        `json:"peers,omitempty"`
-	Payload    json.RawMessage `json:"payload,omitempty"`
-	ICEServers []ICEServer     `json:"iceServers,omitempty"`
-	Code       string          `json:"code,omitempty"`
-	Message    string          `json:"message,omitempty"`
+	Type        string          `json:"type"`
+	RoomID      string          `json:"roomId,omitempty"`
+	PeerID      string          `json:"peerId,omitempty"`
+	From        string          `json:"from,omitempty"`
+	Peers       []string        `json:"peers,omitempty"`
+	Payload     json.RawMessage `json:"payload,omitempty"`
+	ICEServers  []ICEServer     `json:"iceServers,omitempty"`
+	ChatHistory []ChatRecord    `json:"chatHistory,omitempty"`
+	Code        string          `json:"code,omitempty"`
+	Message     string          `json:"message,omitempty"`
 }
 
 type ICEServer struct {
@@ -35,7 +43,13 @@ type ICEServer struct {
 }
 
 func (m ClientMessage) validRelay() bool {
-	if m.To == "" || len(m.Payload) == 0 || !json.Valid(m.Payload) {
+	if len(m.Payload) == 0 || !json.Valid(m.Payload) {
+		return false
+	}
+	if m.Type == messageChat {
+		return true
+	}
+	if m.To == "" {
 		return false
 	}
 	switch m.Type {
@@ -44,4 +58,24 @@ func (m ClientMessage) validRelay() bool {
 	default:
 		return false
 	}
+}
+
+type ChatRecord struct {
+	From    string          `json:"from"`
+	Payload json.RawMessage `json:"payload"`
+}
+
+type chatPayload struct {
+	Text string `json:"text"`
+}
+
+func validChatPayload(payload json.RawMessage) (string, bool) {
+	var message chatPayload
+	if json.Unmarshal(payload, &message) != nil || message.Text == "" || !utf8.ValidString(message.Text) {
+		return "", false
+	}
+	if utf8.RuneCountInString(message.Text) > maxChatLength || len(message.Text) > maxChatBytes {
+		return "", false
+	}
+	return message.Text, true
 }

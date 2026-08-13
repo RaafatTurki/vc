@@ -3,6 +3,7 @@
   import CallHeader from "../lib/CallHeader.svelte"
   import DeviceControls from "../lib/DeviceControls.svelte"
   import VideoGrid from "../lib/VideoGrid.svelte"
+  import ChatPanel, { type ChatMessage } from "../lib/ChatPanel.svelte"
   import type { DeviceType, MediaDeviceOption, Peer } from "../lib/types"
 
   interface Props {
@@ -40,6 +41,11 @@
     onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
     onSwitchCamera: () => void | Promise<void>
     onLeave: () => void
+    chatMessages: ChatMessage[]
+    chatOpen: boolean
+    unreadChatMessages: number
+    onSendChat: (text: string) => void
+    onToggleChat: () => void
   }
 
   let {
@@ -77,6 +83,11 @@
     onStartScreenShare,
     onSwitchCamera,
     onLeave,
+    chatMessages,
+    chatOpen,
+    unreadChatMessages,
+    onSendChat,
+    onToggleChat,
   }: Props = $props()
 </script>
 
@@ -123,6 +134,7 @@
     {onLeave}
   />
   {#if cameraError}<p role="alert">{cameraError}</p>{/if}
+  <ChatPanel messages={chatMessages} open={chatOpen} unread={unreadChatMessages} onSend={onSendChat} onToggle={onToggleChat} />
 </section>
 
 <style>

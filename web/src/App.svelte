@@ -17,6 +17,7 @@
   } from "./lib/call"
   import type { DeviceType, MediaDeviceOption, Peer, PeerState } from "./lib/types"
   import { NoiseSuppression } from "./lib/noiseSuppression"
+  import type { ChatMessage } from "./lib/ChatPanel.svelte"
 
   interface SignalMessage {
     type: string
@@ -26,6 +27,7 @@
     peers?: string[]
     iceServers?: RTCIceServer[]
     payload?: unknown
+    chatHistory?: Array<{ from?: string; payload?: unknown }>
     code?: string
     message?: string
   }
@@ -61,6 +63,9 @@
   let sharingScreen = $state(false)
   let cameraError = $state("")
   let copyLabel = $state("Copy invite link")
+  let chatMessages = $state<ChatMessage[]>([])
+  let chatOpen = $state(false)
+  let unreadChatMessages = $state(0)
 
   let socket: WebSocket | null = null
   let selfPeerID = ""
@@ -277,11 +282,16 @@
           selfPeerID = message.peerId || ""
           iceServers = Array.isArray(message.iceServers) ? message.iceServers : []
           setStatus("connected", "Connected")
+          chatMessages = []
+          for (const item of message.chatHistory ?? []) appendChatMessage(item.from || "", item.payload, false)
           for (const peerID of message.peers ?? []) {
             createPeer(peerID)
             sendPeerState(peerID)
             sendSignal("peer-ready", peerID, true)
           }
+          break
+        case "chat-message":
+          appendChatMessage(message.from || "", message.payload, true)
           break
         case "peer-joined":
           if (!message.peerId) break
@@ -473,6 +483,27 @@
     }
   }
 
+  function appendChatMessage(senderID: string, payload: unknown, notify: boolean): void {
+    const text = typeof payload === "object" && payload !== null && "text" in payload && typeof payload.text === "string" ? payload.text : ""
+    if (!text || Array.from(text).length > 4000 || new TextEncoder().encode(text).length > 16 * 1024) return
+    const peer = peers.get(senderID)
+    chatMessages = [...chatMessages, { id: `${senderID}-${Date.now()}-${Math.random()}`, senderID, senderName: peer?.name || "Guest", text, own: senderID === selfPeerID }].slice(-500)
+    if (notify && !chatOpen) unreadChatMessages += 1
+  }
+
+  function sendChat(text: string): void {
+    if (socket?.readyState !== WebSocket.OPEN) return
+    if (!text || Array.from(text).length > 4000 || new TextEncoder().encode(text).length > 16 * 1024) return
+    const payload = { text }
+    sendSignal("chat-message", "", payload)
+    appendChatMessage(selfPeerID, payload, false)
+  }
+
+  function toggleChat(): void {
+    chatOpen = !chatOpen
+    if (chatOpen) unreadChatMessages = 0
+  }
+
   function sendPeerState(peerID: string): void {
     sendSignal("peer-state", peerID, {
       name: participantName,
@@ -498,6 +529,7 @@
   function receivePeerState(peerID: string, state: PeerState): void {
     const peer = createPeer(peerID)
     peer.name = cleanName(state?.name) || peer.name
+    chatMessages = chatMessages.map(message => message.senderID === peerID ? { ...message, senderName: peer.name } : message)
     peer.device = state?.device === "mobile" ? "mobile" : "computer"
     peer.microphoneMuted = state?.microphoneMuted === true
     peer.noiseCancellationEnabled = state?.noiseCancellationEnabled !== false
@@ -589,6 +621,9 @@
     noiseSuppression = null
     screenAudioContext = null
     screenAudioNodes = []
+    chatMessages = []
+    chatOpen = false
+    unreadChatMessages = 0
     screenSharing = false
     sharingScreen = false
   }
@@ -1201,9 +1236,15 @@
       onStartScreenShare={startScreenShare}
       onSwitchCamera={switchCamera}
       onLeave={leaveCall}
+      {chatMessages}
+      {chatOpen}
+      unreadChatMessages={unreadChatMessages}
+      onSendChat={sendChat}
+      onToggleChat={toggleChat}
     />
   {/if}
 </main>
+
 
 <style>
   .shell {
