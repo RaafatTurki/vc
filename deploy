@@ -8,4 +8,4 @@ if [[ ! -f .env ]]; then
 fi
 
 git reset --hard && git fetch && git rebase
-docker compose up -d --build --force-recreate
+docker compose up -d --build
