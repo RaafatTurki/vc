@@ -333,6 +333,7 @@
       name: `Guest ${peerID.slice(0, 6)}`,
       device: "computer",
       microphoneMuted: false,
+      noiseCancellationEnabled: true,
       cameraStopped: false,
       screenSharing: false,
       connection,
@@ -477,6 +478,7 @@
       name: participantName,
       device: deviceType,
       microphoneMuted,
+      noiseCancellationEnabled,
       cameraStopped,
       screenSharing,
       screenStreamID: displayStream?.id || "",
@@ -498,6 +500,7 @@
     peer.name = cleanName(state?.name) || peer.name
     peer.device = state?.device === "mobile" ? "mobile" : "computer"
     peer.microphoneMuted = state?.microphoneMuted === true
+    peer.noiseCancellationEnabled = state?.noiseCancellationEnabled !== false
     peer.cameraStopped = state?.cameraStopped === true
     peer.screenSharing = state?.screenSharing === true
     peer.screenStreamID = typeof state?.screenStreamID === "string" ? state.screenStreamID.slice(0, 128) : ""
@@ -1038,6 +1041,7 @@
       await noiseSuppression?.stop()
       noiseSuppression = null
     }
+    broadcastPeerState()
     if (screenSharing && displayStream) await startScreenAudioMix(displayStream)
     else await replaceAudioTrack(noiseCancellationEnabled ? processedAudioTrack : localStream?.getAudioTracks()[0] || null)
   }

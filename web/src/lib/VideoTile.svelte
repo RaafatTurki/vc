@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte"
-  import { Maximize2, MicOff, Minimize2, Monitor, ScreenShare, Smartphone, VideoOff, Volume2, VolumeX } from "@lucide/svelte"
+  import { AudioLines, Maximize2, MicOff, Minimize2, Monitor, ScreenShare, Smartphone, VideoOff, Volume2, VolumeX } from "@lucide/svelte"
   import type { DeviceType } from "./types"
 
   interface Props {
@@ -8,6 +8,7 @@
     name: string
     device?: DeviceType
     microphoneMuted?: boolean
+    noiseCancellationEnabled?: boolean
     cameraStopped?: boolean
     screenSharing?: boolean
     screenOnly?: boolean
@@ -22,6 +23,7 @@
     name,
     device = "computer",
     microphoneMuted = false,
+    noiseCancellationEnabled = true,
     cameraStopped = false,
     screenSharing = false,
     screenOnly = false,
@@ -143,6 +145,11 @@
     {#if !screenOnly && cameraStopped}
       <span class="video-badge muted-badge" title="Camera off" aria-label="Camera off">
         <VideoOff class="badge-icon" aria-hidden="true" />
+      </span>
+    {/if}
+    {#if !screenOnly && !noiseCancellationEnabled}
+      <span class="video-badge muted-badge" title="Noise cancellation off" aria-label="Noise cancellation off">
+        <AudioLines class="badge-icon" aria-hidden="true" />
       </span>
     {/if}
     {#if screenSharing}

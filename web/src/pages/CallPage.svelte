@@ -87,6 +87,7 @@
     {participantName}
     {deviceType}
     {microphoneMuted}
+    {noiseCancellationEnabled}
     {cameraStopped}
     {cameraFacing}
     {screenSharing}

@@ -9,6 +9,7 @@ export interface PeerState {
   name?: string
   device?: DeviceType
   microphoneMuted?: boolean
+  noiseCancellationEnabled?: boolean
   cameraStopped?: boolean
   screenSharing?: boolean
   screenStreamID?: string
@@ -19,6 +20,7 @@ export interface Peer {
   name: string
   device: DeviceType
   microphoneMuted: boolean
+  noiseCancellationEnabled: boolean
   cameraStopped: boolean
   screenSharing: boolean
   connection: RTCPeerConnection

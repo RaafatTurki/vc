@@ -7,6 +7,7 @@
     participantName: string
     deviceType: DeviceType
     microphoneMuted: boolean
+    noiseCancellationEnabled: boolean
     cameraStopped: boolean
     cameraFacing: VideoFacingModeEnum
     screenSharing: boolean
@@ -20,6 +21,7 @@
     participantName,
     deviceType,
     microphoneMuted,
+    noiseCancellationEnabled,
     cameraStopped,
     cameraFacing,
     screenSharing,
@@ -30,12 +32,12 @@
 </script>
 
 <div class="grid">
-  <VideoTile stream={localStream} name={`${participantName} (You)`} device={deviceType} {microphoneMuted} {cameraStopped} local mirrored={cameraFacing !== "environment"} />
+  <VideoTile stream={localStream} name={`${participantName} (You)`} device={deviceType} {microphoneMuted} {noiseCancellationEnabled} {cameraStopped} local mirrored={cameraFacing !== "environment"} />
   {#if screenSharing && displayStream}
     <VideoTile stream={displayStream} name="Your screen" screenSharing screenOnly local mirrored={false} />
   {/if}
   {#each [...peers.values()] as peer (peer.id)}
-    <VideoTile stream={peer.stream} name={peer.name} device={peer.device} microphoneMuted={peer.microphoneMuted} cameraStopped={peer.cameraStopped} locallyMuted={peer.locallyMuted} onToggleMute={() => onTogglePeerPlayback(peer.id)} />
+    <VideoTile stream={peer.stream} name={peer.name} device={peer.device} microphoneMuted={peer.microphoneMuted} noiseCancellationEnabled={peer.noiseCancellationEnabled} cameraStopped={peer.cameraStopped} locallyMuted={peer.locallyMuted} onToggleMute={() => onTogglePeerPlayback(peer.id)} />
     {#if peer.screenSharing && peer.screenStream}
       <VideoTile stream={peer.screenStream} name={`${peer.name}'s screen`} screenSharing screenOnly locallyMuted={peer.locallyMuted} />
     {/if}
