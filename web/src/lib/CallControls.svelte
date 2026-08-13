@@ -140,7 +140,11 @@
   button.danger { border-color: var(--danger-border); color: var(--danger); background: var(--danger-10); }
   button :global(svg) { width: 1.125rem; height: 1.125rem; }
 
-  .screen-tools { display: flex; gap: var(--space-1); align-items: center; }
+  .screen-tools {
+    display: flex;
+    gap: var(--space-1);
+    align-items: center;
+  }
 
   @media (hover: hover) and (pointer: fine) {
     button:hover:not(:disabled) { color: var(--accent); background: var(--accent-subtle); }

@@ -94,29 +94,6 @@
 <div class="call-page">
   <section class="video-column" aria-label="Vivid call">
     <CallHeader {roomID} {copyLabel} {onCopy} />
-    <VideoGrid
-      {localStream}
-      {participantName}
-      {deviceType}
-      {microphoneMuted}
-      {noiseCancellationEnabled}
-      {cameraStopped}
-      {cameraFacing}
-      {screenSharing}
-      {displayStream}
-      {peers}
-      {onTogglePeerPlayback}
-    />
-    <DeviceControls
-      {audioDevices}
-      {videoDevices}
-      bind:selectedAudioDeviceID
-      bind:selectedVideoDeviceID
-      {switchingAudioDevice}
-      {switchingVideoDevice}
-      onAudioChange={onAudioDeviceChange}
-      onVideoChange={onVideoDeviceChange}
-    />
     <CallControls
       {microphoneMuted}
       {noiseCancellationEnabled}
@@ -137,7 +114,30 @@
       {unreadChatMessages}
       {onToggleChat}
     />
+    <DeviceControls
+      {audioDevices}
+      {videoDevices}
+      bind:selectedAudioDeviceID
+      bind:selectedVideoDeviceID
+      {switchingAudioDevice}
+      {switchingVideoDevice}
+      onAudioChange={onAudioDeviceChange}
+      onVideoChange={onVideoDeviceChange}
+    />
     {#if cameraError}<p role="alert">{cameraError}</p>{/if}
+    <VideoGrid
+      {localStream}
+      {participantName}
+      {deviceType}
+      {microphoneMuted}
+      {noiseCancellationEnabled}
+      {cameraStopped}
+      {cameraFacing}
+      {screenSharing}
+      {displayStream}
+      {peers}
+      {onTogglePeerPlayback}
+    />
   </section>
   <section class="chat-column" aria-label="Room chat">
     <ChatPanel messages={chatMessages} open={chatOpen} unread={unreadChatMessages} onSend={onSendChat} />
