@@ -191,11 +191,12 @@ func (c *client) readPump(hub *Hub) {
 			continue
 		}
 		if message.Type == messageChat {
-			if _, ok := validChatPayload(message.Payload); !ok {
+			canonical, ok := validChatPayload(message.Payload)
+			if !ok {
 				c.trySend(ServerMessage{Type: "error", Code: "invalid-chat", Message: "chat messages must be non-empty and no longer than 4,000 characters or 16 KiB"})
 				continue
 			}
-			if err := hub.BroadcastChat(c, ChatRecord{From: c.peerID, Payload: message.Payload}); err != nil {
+			if err := hub.BroadcastChat(c, ChatRecord{From: c.peerID, Payload: canonical}); err != nil {
 				c.trySend(ServerMessage{Type: "error", Code: "chat-failed", Message: err.Error()})
 			}
 			continue

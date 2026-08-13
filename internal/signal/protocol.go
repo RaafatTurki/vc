@@ -2,6 +2,7 @@ package signal
 
 import (
 	"encoding/json"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -15,6 +16,7 @@ const (
 	maxChatLength    = 4000
 	maxChatBytes     = 16 << 10
 	maxChatHistory   = 500
+	maxChatName      = 80
 )
 
 type ClientMessage struct {
@@ -66,16 +68,22 @@ type ChatRecord struct {
 }
 
 type chatPayload struct {
-	Text string `json:"text"`
+	Text       string `json:"text"`
+	SenderName string `json:"senderName"`
 }
 
-func validChatPayload(payload json.RawMessage) (string, bool) {
+func validChatPayload(payload json.RawMessage) (json.RawMessage, bool) {
 	var message chatPayload
 	if json.Unmarshal(payload, &message) != nil || message.Text == "" || !utf8.ValidString(message.Text) {
-		return "", false
+		return nil, false
+	}
+	message.SenderName = strings.TrimSpace(message.SenderName)
+	if message.SenderName == "" || !utf8.ValidString(message.SenderName) || utf8.RuneCountInString(message.SenderName) > maxChatName {
+		return nil, false
 	}
 	if utf8.RuneCountInString(message.Text) > maxChatLength || len(message.Text) > maxChatBytes {
-		return "", false
+		return nil, false
 	}
-	return message.Text, true
+	canonical, err := json.Marshal(message)
+	return canonical, err == nil
 }
