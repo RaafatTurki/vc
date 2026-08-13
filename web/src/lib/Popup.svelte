@@ -9,12 +9,13 @@
   interface Props {
     open: boolean
     title: string
+    message?: string
     options: Option[]
     onSelect: (value: string) => void | Promise<void>
     onClose: () => void
   }
 
-  let { open, title, options, onSelect, onClose }: Props = $props()
+  let { open, title, message = "", options, onSelect, onClose }: Props = $props()
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "Escape") onClose()
@@ -32,6 +33,7 @@
         <X aria-hidden="true" />
       </button>
     </header>
+    {#if message}<p class="message">{message}</p>{/if}
     <div class="options">
       {#each options as option}
         <button type="button" onclick={() => onSelect(option.value)}>{option.label}</button>
@@ -79,6 +81,8 @@
     color: var(--ink);
     font-size: 1rem;
   }
+
+  .message { margin: 0; color: var(--muted); font-size: 0.84rem; }
 
   button {
     border: 1px solid var(--line-soft);

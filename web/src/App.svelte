@@ -18,6 +18,7 @@
   import type { DeviceType, MediaDeviceOption, Peer, PeerState } from "./lib/types"
   import { NoiseSuppression } from "./lib/noiseSuppression"
   import type { ChatMessage } from "./lib/ChatPanel.svelte"
+  import Popup from "./lib/Popup.svelte"
 
   interface SignalMessage {
     type: string
@@ -66,6 +67,7 @@
   let chatMessages = $state<ChatMessage[]>([])
   let chatOpen = $state(false)
   let unreadChatMessages = $state(0)
+  let leavePromptOpen = $state(false)
 
   let socket: WebSocket | null = null
   let selfPeerID = ""
@@ -568,7 +570,16 @@
   }
 
   function leaveCall(): void {
+    if (peers.size === 0 && chatMessages.length > 0) {
+      leavePromptOpen = true
+      return
+    }
     goHome(true)
+  }
+
+  function handleLeavePrompt(value: string): void {
+    leavePromptOpen = false
+    if (value === "leave") goHome(true)
   }
 
   function goHome(pushHistory: boolean): void {
@@ -1243,6 +1254,15 @@
     />
   {/if}
 </main>
+
+<Popup
+  open={leavePromptOpen}
+  title="Leave room?"
+  message="You are the last person in this room. Leaving will permanently delete the chat messages."
+  options={[{ value: "cancel", label: "Stay in room" }, { value: "leave", label: "Leave room" }]}
+  onSelect={handleLeavePrompt}
+  onClose={() => leavePromptOpen = false}
+/>
 
 
 <style>
