@@ -135,8 +135,6 @@
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     background: var(--surface);
-    box-shadow: 0 0 0 1px var(--accent-4);
-    backdrop-filter: blur(20px);
   }
 
   label {
@@ -160,7 +158,7 @@
     background: var(--bg);
   }
 
-  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
+  input:focus { border-color: var(--accent); }
   .form-field + .form-field { margin-top: 1.125rem; }
 
   .room-entry {

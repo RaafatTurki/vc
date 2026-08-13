@@ -44,7 +44,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     button:hover:not(:disabled) { border-color: var(--accent-border-strong); color: var(--accent); background: var(--accent-subtle); }
-    button.primary:hover:not(:disabled) { border-color: var(--accent); color: var(--bg); background: var(--accent); filter: brightness(1.08); }
+    button.primary:hover:not(:disabled) { border-color: var(--accent); color: var(--bg); background: var(--accent); }
   }
   button.compact { min-height: 2.5rem; height: 2.5rem; }
 
@@ -54,6 +54,5 @@
     border: 1px solid var(--accent);
     color: var(--bg);
     background: var(--accent);
-    box-shadow: 0 0 22px var(--accent-16);
   }
 </style>

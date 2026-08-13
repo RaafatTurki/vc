@@ -54,7 +54,10 @@
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 26.25rem), 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    grid-auto-flow: row;
     gap: var(--space-3);
   }
 
@@ -66,7 +69,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    min-height: clamp(12rem, 32vw, 17.5rem);
+    min-height: 0;
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     color: var(--muted);
@@ -89,11 +92,11 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  @media (max-width: 47.5em) {
-    .empty-room { min-height: clamp(10rem, 52vw, 14rem); }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .waiting-ring { animation: none; }
+  }
+
+  @media (max-width: 47.5em) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

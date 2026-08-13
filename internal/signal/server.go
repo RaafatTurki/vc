@@ -191,7 +191,7 @@ func (c *client) readPump(hub *Hub) {
 			continue
 		}
 		if message.Type == messageChat {
-			canonical, ok := validChatPayload(message.Payload)
+			canonical, ok := validChatPayload(message.Payload, time.Now().UnixMilli())
 			if !ok {
 				c.trySend(ServerMessage{Type: "error", Code: "invalid-chat", Message: "chat messages must be non-empty and no longer than 4,000 characters or 16 KiB"})
 				continue

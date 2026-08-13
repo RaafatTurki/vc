@@ -126,7 +126,7 @@
   }
 
   .trigger:focus-visible,
-  .trigger.open { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
+  .trigger.open { border-color: var(--accent); }
   .trigger:disabled { cursor: default; opacity: 0.65; }
   .trigger span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .trigger .selected-placeholder { color: var(--muted); }
@@ -146,7 +146,6 @@
     border: 1px solid var(--accent-border);
     border-radius: 2px;
     background: var(--surface);
-    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 45%);
   }
 
   .option {
@@ -165,7 +164,7 @@
   .option.selected { color: var(--accent); }
 
   @media (hover: hover) and (pointer: fine) {
-    .trigger:hover:not(:disabled) { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-12); }
+    .trigger:hover:not(:disabled) { border-color: var(--accent); }
     .option:hover { color: var(--ink); background: var(--accent-soft); }
   }
 </style>

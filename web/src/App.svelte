@@ -65,7 +65,7 @@
   let cameraError = $state("")
   let copyLabel = $state("Copy invite link")
   let chatMessages = $state<ChatMessage[]>([])
-  let chatOpen = $state(false)
+  let chatOpen = $state(true)
   let unreadChatMessages = $state(0)
   let leavePromptOpen = $state(false)
 
@@ -191,6 +191,7 @@
       cameraTrack = localStream.getVideoTracks()[0] || null
       microphoneMuted = !joinWithAudio
       cameraStopped = !joinWithVideo
+      chatOpen = true
       cameraFacing = trackFacing(localStream.getVideoTracks()[0], cameraFacing)
       await refreshMediaDevices()
 
@@ -488,15 +489,16 @@
   function appendChatMessage(senderID: string, payload: unknown, notify: boolean): void {
     const text = typeof payload === "object" && payload !== null && "text" in payload && typeof payload.text === "string" ? payload.text : ""
     const senderName = typeof payload === "object" && payload !== null && "senderName" in payload && typeof payload.senderName === "string" ? payload.senderName : "Guest"
+    const timestamp = typeof payload === "object" && payload !== null && "timestamp" in payload && typeof payload.timestamp === "number" ? payload.timestamp : Date.now()
     if (!text || Array.from(text).length > 4000 || new TextEncoder().encode(text).length > 16 * 1024) return
-    chatMessages = [...chatMessages, { id: `${senderID}-${Date.now()}-${Math.random()}`, senderID, senderName, text, own: senderID === selfPeerID }].slice(-500)
+    chatMessages = [...chatMessages, { id: `${senderID}-${Date.now()}-${Math.random()}`, senderID, senderName, text, timestamp, own: senderID === selfPeerID }].slice(-500)
     if (notify && !chatOpen) unreadChatMessages += 1
   }
 
   function sendChat(text: string): void {
     if (socket?.readyState !== WebSocket.OPEN) return
     if (!text || Array.from(text).length > 4000 || new TextEncoder().encode(text).length > 16 * 1024) return
-    const payload = { text, senderName: participantName }
+    const payload = { text, senderName: participantName, timestamp: Date.now() }
     sendSignal("chat-message", "", payload)
     appendChatMessage(selfPeerID, payload, false)
   }
@@ -1194,7 +1196,7 @@
 
 <svelte:head><title>{currentPage === "call" ? `${roomID} · Vivid` : "Vivid"}</title></svelte:head>
 
-<main class="shell">
+<main class:shell-wide={currentPage === "call"} class="shell">
   <TopBar state={statusState} text={statusText} />
 
   {#if currentPage === "home"}
@@ -1273,11 +1275,15 @@
     padding: 2.25rem 0 6rem;
   }
 
+  .shell-wide { width: 100%; padding-inline: clamp(1rem, 2vw, 2rem); }
+
   @media (max-width: 47.5em) {
     .shell {
       width: min(var(--content-width), calc(100% - 2rem));
       padding-top: 1.75rem;
       padding-bottom: 4.5rem;
     }
+
+    .shell-wide { width: 100%; padding-inline: 1rem; }
   }
 </style>

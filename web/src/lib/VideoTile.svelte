@@ -200,7 +200,7 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: clamp(12rem, 32vw, 17.5rem);
+    min-height: 0;
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     background: var(--bg-soft);
@@ -214,7 +214,6 @@
     inset: 0;
     border: 2px solid var(--accent);
     border-radius: inherit;
-    box-shadow: inset 0 0 18px var(--accent-18);
     pointer-events: none;
     content: "";
   }
@@ -258,7 +257,6 @@
     border-radius: 2px;
     color: var(--ink);
     background: var(--surface-soft);
-    backdrop-filter: blur(12px);
   }
 
   .tile-actions {
@@ -297,7 +295,6 @@
     line-height: 1;
     text-overflow: ellipsis;
     white-space: nowrap;
-    backdrop-filter: blur(12px);
   }
 
   .video-label :global(.device-icon) { flex: 0 0 auto; width: 0.875rem; height: 0.875rem; color: var(--accent); }
@@ -321,7 +318,6 @@
     background: var(--surface-video);
     font-size: 0.68rem;
     font-weight: 750;
-    backdrop-filter: blur(12px);
   }
 
   .video-badge :global(.badge-icon) { width: 0.8125rem; height: 0.8125rem; }
@@ -403,7 +399,6 @@
     border: 1px solid var(--line-soft);
     border-radius: 2px;
     background: var(--surface-control);
-    backdrop-filter: blur(12px);
   }
 
   @media (hover: hover) and (pointer: fine) {

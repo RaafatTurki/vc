@@ -70,14 +70,16 @@ type ChatRecord struct {
 type chatPayload struct {
 	Text       string `json:"text"`
 	SenderName string `json:"senderName"`
+	Timestamp  int64  `json:"timestamp"`
 }
 
-func validChatPayload(payload json.RawMessage) (json.RawMessage, bool) {
+func validChatPayload(payload json.RawMessage, timestamp int64) (json.RawMessage, bool) {
 	var message chatPayload
 	if json.Unmarshal(payload, &message) != nil || message.Text == "" || !utf8.ValidString(message.Text) {
 		return nil, false
 	}
 	message.SenderName = strings.TrimSpace(message.SenderName)
+	message.Timestamp = timestamp
 	if message.SenderName == "" || !utf8.ValidString(message.SenderName) || utf8.RuneCountInString(message.SenderName) > maxChatName {
 		return nil, false
 	}

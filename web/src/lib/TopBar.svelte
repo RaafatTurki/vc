@@ -40,7 +40,6 @@
     border: 1px solid var(--accent);
     border-radius: 0;
     background: var(--accent-12);
-    box-shadow: 0 0 16px var(--accent-glow);
   }
 
   .brand-mark::after {
@@ -75,7 +74,7 @@
     background: var(--muted);
   }
 
-  .status[data-state="connecting"] .status-dot { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
-  .status[data-state="connected"] .status-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
-  .status[data-state="error"] .status-dot { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+  .status[data-state="connecting"] .status-dot { background: var(--warning); }
+  .status[data-state="connected"] .status-dot { background: var(--success); }
+  .status[data-state="error"] .status-dot { background: var(--danger); }
 </style>

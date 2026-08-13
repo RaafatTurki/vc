@@ -48,7 +48,6 @@
     inset: 0;
     z-index: 1000;
     background: var(--surface-soft);
-    backdrop-filter: blur(0.25rem);
   }
 
   .popup {
@@ -64,7 +63,6 @@
     border: 1px solid var(--accent-border);
     border-radius: 0.25rem;
     background: var(--surface);
-    box-shadow: 0 1rem 3rem var(--accent-16);
     transform: translate(-50%, -50%);
     overflow: auto;
   }

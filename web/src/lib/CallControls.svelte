@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AudioLines, LogOut, Mic, MicOff, ScreenShare, ScreenShareOff, SwitchCamera, Video, VideoOff } from "@lucide/svelte"
+  import { AudioLines, LogOut, MessageCircle, Mic, MicOff, ScreenShare, ScreenShareOff, SwitchCamera, Video, VideoOff } from "@lucide/svelte"
   import Popup from "./Popup.svelte"
 
   interface Props {
@@ -18,6 +18,9 @@
     onStartScreenShare: (frameRate: 30 | 60 | 120) => void | Promise<void>
     onSwitchCamera: () => void | Promise<void>
     onLeave: () => void
+    chatOpen: boolean
+    unreadChatMessages: number
+    onToggleChat: () => void
   }
 
   let {
@@ -36,6 +39,9 @@
     onStartScreenShare,
     onSwitchCamera,
     onLeave,
+    chatOpen,
+    unreadChatMessages,
+    onToggleChat,
   }: Props = $props()
 
   let frameRatePopupOpen = $state(false)
@@ -84,6 +90,10 @@
     <LogOut aria-hidden="true" />
     <span>Leave</span>
   </button>
+  <button type="button" aria-label={chatOpen ? "Close chat" : "Open chat"} aria-expanded={chatOpen} onclick={onToggleChat}>
+    <MessageCircle aria-hidden="true" />
+    <span>{chatOpen ? "Hide chat" : "Chat"}{unreadChatMessages && !chatOpen ? ` · ${unreadChatMessages}` : ""}</span>
+  </button>
 </div>
 
 <Popup
@@ -96,9 +106,6 @@
 
 <style>
   .controls {
-    position: sticky;
-    bottom: 1.25rem;
-    z-index: 5;
     display: flex;
     gap: var(--space-2);
     align-items: center;
@@ -106,13 +113,11 @@
     width: fit-content;
     max-width: 100%;
     overflow-x: auto;
-    margin: var(--space-6) auto 0;
+    margin: var(--space-4) auto 0;
     padding: var(--space-2);
     border: 1px solid var(--line-14);
     border-radius: 2px;
     background: var(--surface);
-    box-shadow: 0 0 0 1px var(--accent-soft);
-    backdrop-filter: blur(18px);
   }
 
   button {

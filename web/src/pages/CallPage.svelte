@@ -91,53 +91,63 @@
   }: Props = $props()
 </script>
 
-<section aria-label="Vivid call">
-  <CallHeader {roomID} {copyLabel} {onCopy} />
-  <VideoGrid
-    {localStream}
-    {participantName}
-    {deviceType}
-    {microphoneMuted}
-    {noiseCancellationEnabled}
-    {cameraStopped}
-    {cameraFacing}
-    {screenSharing}
-    {displayStream}
-    {peers}
-    {onTogglePeerPlayback}
-  />
-  <DeviceControls
-    {audioDevices}
-    {videoDevices}
-    bind:selectedAudioDeviceID
-    bind:selectedVideoDeviceID
-    {switchingAudioDevice}
-    {switchingVideoDevice}
-    onAudioChange={onAudioDeviceChange}
-    onVideoChange={onVideoDeviceChange}
-  />
-  <CallControls
-    {microphoneMuted}
-    {noiseCancellationEnabled}
-    {cameraStopped}
-    {canShareScreen}
-    {screenSharing}
-    {sharingScreen}
-    {canSwitchCamera}
-    {switchingCamera}
-    {onToggleMicrophone}
-    {onToggleNoiseCancellation}
-    {onToggleCamera}
-    {onToggleScreenShare}
-    {onStartScreenShare}
-    {onSwitchCamera}
-    {onLeave}
-  />
-  {#if cameraError}<p role="alert">{cameraError}</p>{/if}
-  <ChatPanel messages={chatMessages} open={chatOpen} unread={unreadChatMessages} onSend={onSendChat} onToggle={onToggleChat} />
-</section>
+<div class="call-page">
+  <section class="video-column" aria-label="Vivid call">
+    <CallHeader {roomID} {copyLabel} {onCopy} />
+    <VideoGrid
+      {localStream}
+      {participantName}
+      {deviceType}
+      {microphoneMuted}
+      {noiseCancellationEnabled}
+      {cameraStopped}
+      {cameraFacing}
+      {screenSharing}
+      {displayStream}
+      {peers}
+      {onTogglePeerPlayback}
+    />
+    <DeviceControls
+      {audioDevices}
+      {videoDevices}
+      bind:selectedAudioDeviceID
+      bind:selectedVideoDeviceID
+      {switchingAudioDevice}
+      {switchingVideoDevice}
+      onAudioChange={onAudioDeviceChange}
+      onVideoChange={onVideoDeviceChange}
+    />
+    <CallControls
+      {microphoneMuted}
+      {noiseCancellationEnabled}
+      {cameraStopped}
+      {canShareScreen}
+      {screenSharing}
+      {sharingScreen}
+      {canSwitchCamera}
+      {switchingCamera}
+      {onToggleMicrophone}
+      {onToggleNoiseCancellation}
+      {onToggleCamera}
+      {onToggleScreenShare}
+      {onStartScreenShare}
+      {onSwitchCamera}
+      {onLeave}
+      {chatOpen}
+      {unreadChatMessages}
+      {onToggleChat}
+    />
+    {#if cameraError}<p role="alert">{cameraError}</p>{/if}
+  </section>
+  <section class="chat-column" aria-label="Room chat">
+    <ChatPanel messages={chatMessages} open={chatOpen} unread={unreadChatMessages} onSend={onSendChat} />
+  </section>
+</div>
 
 <style>
-  section { padding-top: clamp(2.375rem, 7vh, 4.5rem); }
+  .call-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 23rem); gap: var(--space-4); align-items: start; padding-top: clamp(2.375rem, 7vh, 4.5rem); }
+  .video-column, .chat-column { min-width: 0; }
   p { margin: var(--space-3) auto 0; color: var(--danger); font-size: 0.84rem; text-align: center; }
+  @media (max-width: 60em) { .call-page { grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem); } }
+  @media (max-width: 47.5em) { .call-page { grid-template-columns: 1fr; } }
 </style>
