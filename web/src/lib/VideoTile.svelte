@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte"
-  import { AudioLines, Maximize2, MicOff, Minimize2, Monitor, ScreenShare, Smartphone, VideoOff, Volume2, VolumeX } from "@lucide/svelte"
+  import { AudioLinesX, Maximize2, MicOff, Minimize2, Monitor, ScreenShare, Smartphone, VideoOff, Volume2, VolumeX } from "@lucide/svelte"
   import type { DeviceType } from "./types"
 
   interface Props {
@@ -149,7 +149,7 @@
     {/if}
     {#if !screenOnly && !noiseCancellationEnabled}
       <span class="video-badge muted-badge" title="Noise cancellation off" aria-label="Noise cancellation off">
-        <AudioLines class="badge-icon" aria-hidden="true" />
+        <AudioLinesX class="badge-icon" aria-hidden="true" />
       </span>
     {/if}
     {#if screenSharing}
