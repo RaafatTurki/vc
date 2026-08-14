@@ -10,8 +10,8 @@ services:
     init: true
     environment:
       SIGNAL_ADDRESS: ":8080"
-      SIGNAL_ALLOWED_ORIGINS: "${SIGNAL_ALLOWED_ORIGINS:-https://vivid.raafat.io}"
-      SIGNAL_MAX_ROOM_PEERS: "${SIGNAL_MAX_ROOM_PEERS:-8}"
+      SIGNAL_ALLOWED_ORIGINS: "${SIGNAL_ALLOWED_ORIGINS}"
+      SIGNAL_MAX_ROOM_PEERS: "${SIGNAL_MAX_ROOM_PEERS}"
       STUN_URLS: "${STUN_URLS:-stun:stun.cloudflare.com:3478}"
       TURN_URLS: "${TURN_URLS:-turn:turn.raafat.io:3478?transport=udp}"
       TURN_SHARED_SECRET: "${TURN_SHARED_SECRET:?Set TURN_SHARED_SECRET in the root .env file}"
