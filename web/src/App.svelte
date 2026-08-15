@@ -1269,21 +1269,26 @@
 
 <style>
   .shell {
-    width: min(var(--content-width), calc(100% - 2.5rem));
+    width: min(var(--content-width), calc(100% - 2rem));
     min-height: 100vh;
     margin: 0 auto;
-    padding: 2.25rem 0 6rem;
+    padding: 2rem 0 6rem;
   }
 
-  .shell-wide { width: 100%; padding-inline: clamp(1rem, 2vw, 2rem); }
+  .shell-wide {
+    width: 100%;
+    padding: clamp(1rem, 2vw, 2rem);
+  }
 
-  @media (max-width: 47.5em) {
+  @media (max-width: 50em) {
     .shell {
-      width: min(var(--content-width), calc(100% - 2rem));
-      padding-top: 1.75rem;
-      padding-bottom: 4.5rem;
+      width: min(var(--content-width), calc(100% - 1rem));
+      padding: 2rem 0 4rem;
     }
 
-    .shell-wide { width: 100%; padding-inline: 1rem; }
+    .shell-wide {
+      width: 100%;
+      padding: 1rem;
+    }
   }
 </style>

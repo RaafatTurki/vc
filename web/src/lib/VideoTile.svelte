@@ -196,13 +196,19 @@
 </article>
 
 <style>
+  .video-card,
+  .video-label,
+  .video-badge,
+  .audio-controls {
+    border: 1px solid var(--line-soft);
+    border-radius: 2px;
+  }
+
   .video-card {
     position: relative;
     isolation: isolate;
     overflow: hidden;
     min-height: 0;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
     background: var(--bg-soft);
     clip-path: inset(0 round 2px);
     aspect-ratio: 16 / 10;
@@ -253,8 +259,6 @@
     aspect-ratio: 1;
     place-items: center;
     padding: 0.4375rem;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
     color: var(--ink);
     background: var(--surface-soft);
   }
@@ -287,8 +291,6 @@
     height: var(--overlay-height);
     overflow: hidden;
     padding: 0 0.625rem;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
     background: var(--surface-video);
     font-size: 0.76rem;
     font-weight: 720;
@@ -312,8 +314,6 @@
     gap: 0.3125rem;
     align-items: center;
     padding: 0.3125rem var(--space-2);
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
     color: var(--ink);
     background: var(--surface-video);
     font-size: 0.68rem;
@@ -321,8 +321,10 @@
   }
 
   .video-badge :global(.badge-icon) { width: 0.8125rem; height: 0.8125rem; }
-  .muted-badge { color: var(--danger); border-color: var(--danger-border); background: var(--surface-video); }
-  .sharing-badge { color: var(--accent); border-color: var(--accent-30); background: var(--surface-video); }
+  .muted-badge,
+  .sharing-badge { background: var(--surface-video); }
+  .muted-badge { color: var(--danger); border-color: var(--danger-border); }
+  .sharing-badge { color: var(--accent); border-color: rgb(var(--accent-rgb) / 30%); }
 
   .tile-mute {
     display: inline-flex;
@@ -340,7 +342,7 @@
     font-weight: 700;
   }
 
-  .tile-mute[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-10); }
+  .tile-mute[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: rgb(var(--danger-rgb) / 10%); }
   .tile-mute :global(.tile-mute-icon) { width: 0.875rem; height: 0.875rem; }
 
   .tile-volume {
@@ -396,8 +398,6 @@
     align-items: center;
     height: var(--overlay-height);
     max-width: calc(100% - 2rem);
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
     background: var(--surface-control);
   }
 

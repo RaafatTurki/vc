@@ -115,7 +115,7 @@
     overflow-x: auto;
     margin: var(--space-4) auto 0;
     padding: var(--space-2);
-    border: 1px solid var(--line-14);
+    border: 1px solid rgb(var(--white-rgb) / 14%);
     border-radius: 2px;
     background: var(--surface);
   }
@@ -127,17 +127,12 @@
     height: var(--control-height);
     min-height: var(--control-height);
     padding: 0 0.9375rem;
-    border: 0;
-    border: 1px solid var(--line-soft);
-    border-radius: 2px;
-    color: var(--ink);
-    background: var(--surface-faint);
     font-weight: 650;
     white-space: nowrap;
   }
 
-  button[aria-pressed="true"] { color: var(--danger); border-color: var(--danger-border); background: var(--danger-bg); }
-  button.danger { border-color: var(--danger-border); color: var(--danger); background: var(--danger-10); }
+  button.danger,
+  button[aria-pressed="true"] { border-color: var(--danger-border); color: var(--danger); background: var(--danger-bg); }
   button :global(svg) { width: 1.125rem; height: 1.125rem; }
 
   .screen-tools {
@@ -152,7 +147,7 @@
     button[aria-pressed="true"]:hover:not(:disabled) {
       color: var(--danger);
       border-color: var(--danger-border);
-      background: var(--danger-10);
+      background: var(--danger-bg);
     }
   }
 

@@ -117,7 +117,7 @@
     min-height: var(--control-height);
     min-width: 0;
     padding: 0 0.6875rem;
-    border: 1px solid var(--line-strong);
+    border-color: var(--line-strong);
     border-radius: 2px;
     outline: none;
     color: var(--ink);

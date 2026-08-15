@@ -39,7 +39,7 @@
     height: 1.125rem;
     border: 1px solid var(--accent);
     border-radius: 0;
-    background: var(--accent-12);
+    background: rgb(var(--accent-rgb) / 12%);
   }
 
   .brand-mark::after {
@@ -75,6 +75,6 @@
   }
 
   .status[data-state="connecting"] .status-dot { background: var(--warning); }
-  .status[data-state="connected"] .status-dot { background: var(--success); }
+  .status[data-state="connected"] .status-dot { background: var(--accent); }
   .status[data-state="error"] .status-dot { background: var(--danger); }
 </style>

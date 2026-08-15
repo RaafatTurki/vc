@@ -84,7 +84,7 @@
     width: 2.375rem;
     height: 2.375rem;
     margin-bottom: var(--space-3);
-    border: 2px solid var(--accent-20);
+    border: 2px solid rgb(var(--accent-rgb) / 20%);
     border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 1.3s linear infinite;

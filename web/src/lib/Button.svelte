@@ -34,9 +34,7 @@
     height: var(--control-height);
     min-height: var(--control-height);
     padding: 0 1.0625rem;
-    border: 1px solid var(--accent-border);
-    border-radius: 2px;
-    color: var(--ink);
+    border-color: var(--accent-border);
     background: var(--accent-soft);
     font-weight: 720;
     white-space: nowrap;
@@ -51,7 +49,7 @@
   button.primary {
     width: 100%;
     margin-top: 1.375rem;
-    border: 1px solid var(--accent);
+    border-color: var(--accent);
     color: var(--bg);
     background: var(--accent);
   }

@@ -1,45 +1,42 @@
 :root {
   color-scheme: dark;
+
   --bg: #050505;
   --bg-soft: #0a0a0a;
   --ink: #f0f0f0;
   --muted: #8f8f8f;
   --accent: #43ff6a;
-  --line: rgb(255 255 255 / 10%);
-  --line-soft: rgb(255 255 255 / 12%);
-  --line-strong: rgb(255 255 255 / 16%);
-  --line-14: rgb(255 255 255 / 14%);
+  --accent-rgb: 67 255 106;
+  --danger-rgb: 255 107 107;
+  --white-rgb: 255 255 255;
+  --line: rgb(var(--white-rgb) / 10%);
+  --line-soft: rgb(var(--white-rgb) / 12%);
+  --line-strong: rgb(var(--white-rgb) / 16%);
   --surface: rgb(10 10 10 / 92%);
   --surface-soft: rgb(5 5 5 / 82%);
-  --surface-faint: rgb(255 255 255 / 6%);
+  --surface-faint: rgb(var(--white-rgb) / 6%);
   --surface-video: rgb(5 5 5 / 78%);
   --surface-control: rgb(5 5 5 / 88%);
-  --accent-soft: rgb(67 255 106 / 5%);
-  --accent-subtle: rgb(67 255 106 / 8%);
-  --accent-border: rgb(67 255 106 / 24%);
-  --accent-border-strong: rgb(67 255 106 / 70%);
-  --accent-4: rgb(67 255 106 / 4%);
-  --accent-12: rgb(67 255 106 / 12%);
-  --accent-16: rgb(67 255 106 / 16%);
-  --accent-18: rgb(67 255 106 / 18%);
-  --accent-20: rgb(67 255 106 / 20%);
-  --accent-30: rgb(67 255 106 / 30%);
+  --accent-soft: rgb(var(--accent-rgb) / 5%);
+  --accent-subtle: rgb(var(--accent-rgb) / 8%);
+  --accent-border: rgb(var(--accent-rgb) / 24%);
+  --accent-border-strong: rgb(var(--accent-rgb) / 70%);
   --danger: #ff8c8c;
-  --danger-bg: rgb(255 107 107 / 8%);
-  --danger-border: rgb(255 107 107 / 35%);
-  --danger-10: rgb(255 107 107 / 10%);
-  --scanline: rgb(255 255 255 / 2%);
+  --danger-bg: rgb(var(--danger-rgb) / 8%);
+  --danger-border: rgb(var(--danger-rgb) / 35%);
+  --scanline: rgb(var(--white-rgb) / 2%);
   --warning: #f0c674;
-  --success: #43ff6a;
   --control-height: 2.75rem;
   --overlay-height: 2rem;
-  --content-width: 65rem;
+  --content-width: 75rem;
+
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
+
   font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   color: var(--ink);
   background: var(--bg);
@@ -48,29 +45,28 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+/* scrollbar */
 html {
   scrollbar-color: var(--accent) var(--bg-soft);
   scrollbar-width: thin;
 }
-
 ::-webkit-scrollbar {
   width: 0.45rem;
   height: 0.45rem;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--bg-soft);
 }
-
 ::-webkit-scrollbar-thumb {
   border: 0.1rem solid var(--bg-soft);
   background: var(--accent);
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--success);
+  background: var(--accent);
 }
 
 body {
@@ -96,11 +92,15 @@ body::after {
 
 button,
 input,
-select { font: inherit; }
-
-button,
-input,
-select { min-height: var(--control-height); }
+select {
+  font: inherit;
+  /* text-align: center; */
+  min-height: var(--control-height);
+  border: 1px solid var(--line-soft);
+  border-radius: 2px;
+  color: var(--ink);
+  background: var(--surface-faint);
+}
 
 button { cursor: pointer; letter-spacing: 0.02em; }
 button:disabled { cursor: wait; opacity: 0.6; }

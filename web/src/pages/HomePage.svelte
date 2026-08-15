@@ -151,10 +151,8 @@
     min-height: var(--control-height);
     min-width: 0;
     padding: 0 0.875rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 2px;
+    border-color: var(--line-strong);
     outline: none;
-    color: var(--ink);
     background: var(--bg);
   }
 
@@ -185,9 +183,7 @@
     height: var(--control-height);
     min-height: var(--control-height);
     padding: 0 0.6875rem;
-    border: 1px solid var(--accent-border);
-    border-radius: 2px;
-    color: var(--ink);
+    border-color: var(--accent-border);
     background: var(--accent-soft);
     font-size: 0.78rem;
     font-weight: 680;

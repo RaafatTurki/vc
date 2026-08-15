@@ -83,10 +83,6 @@
   .message { margin: 0; color: var(--muted); font-size: 0.84rem; }
 
   button {
-    border: 1px solid var(--line-soft);
-    border-radius: 0.2rem;
-    color: var(--ink);
-    background: var(--surface-faint);
     font: inherit;
     font-weight: 650;
   }
