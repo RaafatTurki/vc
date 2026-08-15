@@ -7,16 +7,17 @@ import (
 )
 
 const (
-	messageOffer     = "offer"
-	messageAnswer    = "answer"
-	messageCandidate = "ice-candidate"
-	messagePeerReady = "peer-ready"
-	messagePeerState = "peer-state"
-	messageChat      = "chat-message"
-	maxChatLength    = 4000
-	maxChatBytes     = 16 << 10
-	maxChatHistory   = 500
-	maxChatName      = 80
+	messageOffer      = "offer"
+	messageAnswer     = "answer"
+	messageCandidate  = "ice-candidate"
+	messagePeerReady  = "peer-ready"
+	messagePeerState  = "peer-state"
+	messageChat       = "chat-message"
+	// NOTE: move to env
+	maxChatLength     = 4000
+	maxChatBytes      = 16 << 10
+	maxChatHistory    = 500
+	maxChatSenderName = 80
 )
 
 type ClientMessage struct {
@@ -80,7 +81,7 @@ func validChatPayload(payload json.RawMessage, timestamp int64) (json.RawMessage
 	}
 	message.SenderName = strings.TrimSpace(message.SenderName)
 	message.Timestamp = timestamp
-	if message.SenderName == "" || !utf8.ValidString(message.SenderName) || utf8.RuneCountInString(message.SenderName) > maxChatName {
+	if message.SenderName == "" || !utf8.ValidString(message.SenderName) || utf8.RuneCountInString(message.SenderName) > maxChatSenderName {
 		return nil, false
 	}
 	if utf8.RuneCountInString(message.Text) > maxChatLength || len(message.Text) > maxChatBytes {

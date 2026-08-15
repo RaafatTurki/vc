@@ -20,7 +20,11 @@ type Hub struct {
 }
 
 func NewHub(maxRoomPeers int) *Hub {
-	return &Hub{rooms: make(map[string]map[string]*client), chatHistory: make(map[string][]ChatRecord), maxRoomPeers: maxRoomPeers}
+	return &Hub{
+		rooms:        make(map[string]map[string]*client),
+		chatHistory:  make(map[string][]ChatRecord),
+		maxRoomPeers: maxRoomPeers,
+	}
 }
 
 func (h *Hub) Join(c *client, welcome ServerMessage) error {
@@ -62,9 +66,11 @@ func (h *Hub) Leave(c *client) {
 		return
 	}
 	delete(room, c.peerID)
+
 	for _, peer := range room {
 		peer.trySend(ServerMessage{Type: "peer-left", PeerID: c.peerID})
 	}
+
 	if len(room) == 0 {
 		delete(h.rooms, c.roomID)
 		delete(h.chatHistory, c.roomID)
@@ -79,6 +85,7 @@ func (h *Hub) BroadcastChat(from *client, record ChatRecord) error {
 	if room == nil || room[from.peerID] != from {
 		return ErrPeerMissing
 	}
+
 	history := append(h.chatHistory[from.roomID], record)
 	if len(history) > maxChatHistory {
 		history = history[len(history)-maxChatHistory:]
