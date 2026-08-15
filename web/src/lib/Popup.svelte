@@ -1,114 +1,29 @@
 <script lang="ts">
   import { X } from "@lucide/svelte"
-
-  interface Option {
-    value: string
-    label: string
-  }
-
-  interface Props {
-    open: boolean
-    title: string
-    message?: string
-    options: Option[]
-    onSelect: (value: string) => void | Promise<void>
-    onClose: () => void
-  }
-
+  import Button from "./Button.svelte"
+  interface Option { value: string; label: string }
+  interface Props { open: boolean; title: string; message?: string; options: Option[]; onSelect: (value: string) => void | Promise<void>; onClose: () => void }
   let { open, title, message = "", options, onSelect, onClose }: Props = $props()
-
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape") onClose()
-  }
+  let dialog = $state<HTMLDialogElement>()
+  $effect(() => {
+    if (!dialog) return
+    if (open && !dialog.open) dialog.showModal()
+    if (!open && dialog.open) dialog.close()
+  })
+  function cancel(event: Event) { event.preventDefault(); onClose() }
+  function clickBackdrop(event: MouseEvent) { if (event.target === dialog) onClose() }
 </script>
 
-<svelte:window onkeydown={event => open && handleKeydown(event)} />
-
-{#if open}
-  <div class="backdrop" role="presentation" onclick={onClose}></div>
-  <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
-    <header>
-      <h2 id="popup-title">{title}</h2>
-      <button class="close" type="button" aria-label="Close" onclick={onClose}>
-        <X aria-hidden="true" />
-      </button>
-    </header>
-    {#if message}<p class="message">{message}</p>{/if}
-    <div class="options">
-      {#each options as option}
-        <button type="button" onclick={() => onSelect(option.value)}>{option.label}</button>
-      {/each}
-    </div>
-  </div>
-{/if}
+<dialog bind:this={dialog} aria-labelledby="popup-title" oncancel={cancel} onclose={onClose} onclick={clickBackdrop}>
+  <header><h2 id="popup-title">{title}</h2><Button size="icon" kind="ghost" aria-label="Close" onclick={onClose}><X aria-hidden="true" /></Button></header>
+  {#if message}<p class="message">{message}</p>{/if}
+  <div class="options">{#each options as option}<Button fullWidth onclick={() => onSelect(option.value)}>{option.label}</Button>{/each}</div>
+</dialog>
 
 <style>
-  .backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: var(--surface-soft);
-  }
-
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    z-index: 1001;
-    display: grid;
-    gap: var(--space-4);
-    width: min(23rem, calc(100vw - 2rem));
-    max-height: calc(100vh - 2rem);
-    padding: var(--space-4);
-    border: 1px solid var(--accent-border);
-    border-radius: 0.25rem;
-    background: var(--surface);
-    transform: translate(-50%, -50%);
-    overflow: auto;
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-  }
-
-  h2 {
-    margin: 0;
-    color: var(--ink);
-    font-size: 1rem;
-  }
-
-  .message { margin: 0; color: var(--muted); font-size: 0.84rem; }
-
-  button {
-    font: inherit;
-    font-weight: 650;
-  }
-
-  .close {
-    display: grid;
-    width: var(--control-height);
-    height: var(--control-height);
-    min-width: var(--control-height);
-    place-items: center;
-  }
-
-  .close :global(svg) { width: 1rem; height: 1rem; }
-
-  .options {
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .options button {
-    min-height: var(--control-height);
-    padding: 0.65rem 0.8rem;
-    text-align: left;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    button:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-subtle); }
-  }
+  dialog { width: min(23rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: var(--space-4); border: 1px solid var(--accent-border); border-radius: .25rem; color: var(--ink); background: var(--surface); }
+  dialog::backdrop { background: var(--surface-soft); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  h2 { font-size: 1rem; } .message { margin-top: var(--space-4); color: var(--muted); font-size: .84rem; }
+  .options { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
 </style>

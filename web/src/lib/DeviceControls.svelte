@@ -6,8 +6,8 @@
   interface Props {
     audioDevices: MediaDeviceOption[]
     videoDevices: MediaDeviceOption[]
-    selectedAudioDeviceID?: string
-    selectedVideoDeviceID?: string
+    selectedAudioDeviceID: string
+    selectedVideoDeviceID: string
     switchingAudioDevice: boolean
     switchingVideoDevice: boolean
     onAudioChange: (deviceID: string) => void | Promise<void>
@@ -17,8 +17,8 @@
   let {
     audioDevices,
     videoDevices,
-    selectedAudioDeviceID = $bindable(""),
-    selectedVideoDeviceID = $bindable(""),
+    selectedAudioDeviceID,
+    selectedVideoDeviceID,
     switchingAudioDevice,
     switchingVideoDevice,
     onAudioChange,
@@ -33,7 +33,7 @@
         <span><Mic aria-hidden="true" /> Microphone</span>
         <Dropdown
           options={audioDevices.map(device => ({ value: device.deviceId, label: device.label }))}
-          bind:value={selectedAudioDeviceID}
+          value={selectedAudioDeviceID}
           label="Microphone"
           disabled={switchingAudioDevice || audioDevices.length < 2}
           onchange={onAudioChange}
@@ -45,7 +45,7 @@
         <span><Video aria-hidden="true" /> Camera</span>
         <Dropdown
           options={videoDevices.map(device => ({ value: device.deviceId, label: device.label }))}
-          bind:value={selectedVideoDeviceID}
+          value={selectedVideoDeviceID}
           label="Camera"
           disabled={switchingVideoDevice || videoDevices.length < 2}
           onchange={onVideoChange}

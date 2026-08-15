@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Send } from "@lucide/svelte"
   import { tick } from "svelte"
+  import Button from "./Button.svelte"
 
   export interface ChatMessage {
     id: string
@@ -14,11 +15,10 @@
   interface Props {
     messages: ChatMessage[]
     open: boolean
-    unread: number
     onSend: (text: string) => void
   }
 
-  let { messages, open, unread, onSend }: Props = $props()
+  let { messages, open, onSend }: Props = $props()
   let text = $state("")
   let messagesElement = $state<HTMLDivElement>()
 
@@ -57,8 +57,8 @@
       {/each}
     </div>
     <form onsubmit={send}>
-      <input bind:value={text} maxlength="4000" placeholder="Write a message" aria-label="Message" />
-      <button type="submit" aria-label="Send message"><Send aria-hidden="true" /></button>
+      <input class="ui-field" bind:value={text} maxlength="4000" placeholder="Write a message" aria-label="Message" />
+      <Button size="icon" type="submit" aria-label="Send message"><Send aria-hidden="true" /></Button>
     </form>
   </aside>
 {/if}
@@ -74,9 +74,7 @@
   article p { margin: 0.2rem 0 0; overflow-wrap: anywhere; white-space: pre-wrap; }
   .empty { color: var(--muted); font-size: 0.82rem; text-align: center; }
   form { display: flex; gap: var(--space-2); padding: var(--space-3); border-top: 1px solid var(--line-soft); }
-  input { min-width: 0; flex: 1; height: var(--control-height); padding: 0 0.6rem; }
-  form button { display: grid; width: var(--control-height); height: var(--control-height); place-items: center; border-color: var(--accent-border); color: var(--ink); background: var(--accent-subtle); }
-  form button :global(svg) { width: 1rem; height: 1rem; }
+  input { min-width: 0; flex: 1; }
   time { margin-left: var(--space-2); color: var(--muted); font-size: 0.65rem; }
   @media (max-width: 47.5em) { .chat-panel { position: static; width: 100%; height: min(28rem, 55vh); } }
 </style>

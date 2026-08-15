@@ -30,11 +30,9 @@
   }: Props = $props()
 </script>
 
-<section aria-labelledby="setupTitle">
+<section aria-labelledby="setup-title">
   <div>
-    <h1 >Simple</h1>
-    <h1 >Secure</h1>
-    <h1 class="accent">Vivid</h1>
+    <h1 id="setup-title">Simple <span>Secure</span> <strong>Vivid</strong></h1>
     <p class="intro">Create a room, share its link, and talk directly from browser to browser.</p>
     <p class="eyebrow">Private by design</p>
     <div class="install-button">
@@ -49,13 +47,13 @@
   <form onsubmit={onJoin} novalidate>
     <div class="form-field">
       <label for="nameInput">Your name</label>
-      <input id="nameInput" bind:value={participantName} maxlength="32" autocomplete="name" placeholder="How others will see you" required>
+      <input class="ui-field" id="nameInput" bind:value={participantName} maxlength="32" autocomplete="name" placeholder="How others will see you" required>
     </div>
 
     <div class="form-field">
       <label for="roomInput">Room ID</label>
       <div class="room-entry">
-        <input id="roomInput" bind:value={roomInput} maxlength="6" autocomplete="off" spellcheck="false" required>
+        <input class="ui-field" id="roomInput" bind:value={roomInput} maxlength="6" autocomplete="off" spellcheck="false" required>
         <Button onclick={() => roomInput = createRoomID()}>
           <RefreshCw size={17} aria-hidden="true" />
           New room
@@ -78,10 +76,10 @@
     <details>
       <summary>Connection settings</summary>
       <label for="signalInput">Signaling WebSocket URL</label>
-      <input id="signalInput" bind:value={signalInput} type="url" spellcheck="false" required>
+      <input class="ui-field" id="signalInput" bind:value={signalInput} type="url" spellcheck="false" required>
     </details>
 
-    <Button kind="primary" type="submit" disabled={joining}>
+    <Button kind="primary" fullWidth type="submit" disabled={joining}>
       {joining ? "Joining…" : "Join call"}
     </Button>
     {#if setupError}<p class="error" role="alert">{setupError}</p>{/if}
@@ -115,9 +113,8 @@
     font-weight: 500;
   }
 
-  h1.accent {
-    color: var(--accent);
-  }
+  h1 span, h1 strong { display: block; font: inherit; }
+  h1 strong { color: var(--accent); }
 
   .intro {
     max-width: 36.875rem;
@@ -145,18 +142,6 @@
     font-weight: 650;
   }
 
-  input {
-    width: 100%;
-    height: var(--control-height);
-    min-height: var(--control-height);
-    min-width: 0;
-    padding: 0 0.875rem;
-    border-color: var(--line-strong);
-    outline: none;
-    background: var(--bg);
-  }
-
-  input:focus { border-color: var(--accent); }
   .form-field + .form-field { margin-top: 1.125rem; }
 
   .room-entry {

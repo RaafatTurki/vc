@@ -9,7 +9,7 @@
   <div>
     <h1><span>room id:</span> {roomID}</h1>
   </div>
-  <Button compact onclick={onCopy}>
+  <Button size="compact" onclick={onCopy}>
     <Copy size={17} aria-hidden="true" />
     {copyLabel}
   </Button>

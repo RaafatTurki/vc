@@ -16,7 +16,7 @@
     videoConstraints,
   } from "./lib/call"
   import type { DeviceType, MediaDeviceOption, Peer, PeerState } from "./lib/types"
-  import { NoiseSuppression } from "./lib/noiseSuppression"
+  import type { NoiseSuppression } from "./lib/noiseSuppression"
   import type { ChatMessage } from "./lib/ChatPanel.svelte"
   import Popup from "./lib/Popup.svelte"
 
@@ -84,6 +84,7 @@
   let mixedAudioTrack: MediaStreamTrack | null = null
   let processedAudioTrack: MediaStreamTrack | null = null
   let noiseSuppression: NoiseSuppression | null = null
+  let noiseSuppressionLoad: Promise<NoiseSuppression> | null = null
   let screenAudioContext: AudioContext | null = null
   let screenAudioNodes: AudioNode[] = []
   let installPrompt: BeforeInstallPromptEvent | null = null
@@ -1065,7 +1066,7 @@
   async function updateNoiseCancellation(track = localStream?.getAudioTracks()[0] || null): Promise<void> {
     if (!track || !noiseCancellationEnabled) return
     try {
-      noiseSuppression ??= new NoiseSuppression()
+      noiseSuppression ??= await loadNoiseSuppression()
       processedAudioTrack?.stop()
       processedAudioTrack = await noiseSuppression.start(track)
     } catch (error) {
@@ -1075,6 +1076,16 @@
       await noiseSuppression?.stop()
       noiseSuppression = null
       console.warn("Noise cancellation is unavailable; using the microphone directly.", error)
+    }
+  }
+
+  async function loadNoiseSuppression(): Promise<NoiseSuppression> {
+    noiseSuppressionLoad ??= import("./lib/noiseSuppression").then(({ NoiseSuppression }) => new NoiseSuppression())
+    try {
+      return await noiseSuppressionLoad
+    } catch (error) {
+      noiseSuppressionLoad = null
+      throw error
     }
   }
 
@@ -1214,45 +1225,9 @@
     />
   {:else}
     <CallPage
-      {roomID}
-      {copyLabel}
-      {localStream}
-      {participantName}
-      {deviceType}
-      {microphoneMuted}
-      {noiseCancellationEnabled}
-      {cameraStopped}
-      {cameraFacing}
-      {screenSharing}
-      {displayStream}
-      {peers}
-      {audioDevices}
-      {videoDevices}
-      bind:selectedAudioDeviceID
-      bind:selectedVideoDeviceID
-      {switchingAudioDevice}
-      {switchingVideoDevice}
-      {canShareScreen}
-      {sharingScreen}
-      {canSwitchCamera}
-      {switchingCamera}
-      {cameraError}
-      onCopy={copyInviteLink}
-      onTogglePeerPlayback={togglePeerPlayback}
-      onAudioDeviceChange={changeAudioDevice}
-      onVideoDeviceChange={changeVideoDevice}
-      onToggleMicrophone={toggleMicrophone}
-      onToggleNoiseCancellation={toggleNoiseCancellation}
-      onToggleCamera={toggleCamera}
-      onToggleScreenShare={toggleScreenShare}
-      onStartScreenShare={startScreenShare}
-      onSwitchCamera={switchCamera}
-      onLeave={leaveCall}
-      {chatMessages}
-      {chatOpen}
-      unreadChatMessages={unreadChatMessages}
-      onSendChat={sendChat}
-      onToggleChat={toggleChat}
+      session={{ roomID, copyLabel, participantName, deviceType, peers, cameraError, onCopy: copyInviteLink, onTogglePeerPlayback: togglePeerPlayback, onLeave: leaveCall }}
+      media={{ localStream, displayStream, microphoneMuted, noiseCancellationEnabled, cameraStopped, cameraFacing, screenSharing, audioDevices, videoDevices, selectedAudioDeviceID, selectedVideoDeviceID, switchingAudioDevice, switchingVideoDevice, canShareScreen, sharingScreen, canSwitchCamera, switchingCamera, onAudioDeviceChange: changeAudioDevice, onVideoDeviceChange: changeVideoDevice, onToggleMicrophone: toggleMicrophone, onToggleNoiseCancellation: toggleNoiseCancellation, onToggleCamera: toggleCamera, onToggleScreenShare: toggleScreenShare, onStartScreenShare: startScreenShare, onSwitchCamera: switchCamera }}
+      chat={{ messages: chatMessages, open: chatOpen, unread: unreadChatMessages, onSend: sendChat, onToggle: toggleChat }}
     />
   {/if}
 </main>
