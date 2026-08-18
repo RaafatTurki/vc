@@ -40,12 +40,6 @@ export interface Peer {
   pendingCandidates: RTCIceCandidateInit[]
 }
 
-export interface IceServerMessage {
-  urls: string | string[]
-  username?: string
-  credential?: string
-}
-
 declare global {
   interface Navigator {
     userAgentData?: { mobile?: boolean }
@@ -53,18 +47,5 @@ declare global {
 
   interface Window {
     webkitAudioContext?: typeof AudioContext
-  }
-
-  interface Document {
-    webkitExitFullscreen?: () => void
-    webkitFullscreenElement?: Element | null
-  }
-
-  interface HTMLElement {
-    webkitRequestFullscreen?: () => void
-  }
-
-  interface HTMLVideoElement {
-    webkitEnterFullscreen?: () => void
   }
 }

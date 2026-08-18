@@ -52,7 +52,6 @@ export class NoiseSuppression {
   }
 
   async stop(): Promise<void> {
-
     this.processor?.disconnect()
     this.merger?.disconnect()
     this.source?.disconnect()

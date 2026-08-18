@@ -1,0 +1,5 @@
+- prompt link-joining-users for a username
+- call page ui layout redesign
+- fix the no scroll-bar approach (pc only)
+- cleanup all the css
+- restore chat functionality

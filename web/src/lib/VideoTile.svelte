@@ -42,16 +42,10 @@
 
   onMount(() => {
     document.addEventListener("fullscreenchange", updateFullscreenState)
-    document.addEventListener("webkitfullscreenchange", updateFullscreenState)
-    video?.addEventListener("webkitbeginfullscreen", onVideoFullscreenStart)
-    video?.addEventListener("webkitendfullscreen", onVideoFullscreenEnd)
   })
 
   onDestroy(() => {
     document.removeEventListener("fullscreenchange", updateFullscreenState)
-    document.removeEventListener("webkitfullscreenchange", updateFullscreenState)
-    video?.removeEventListener("webkitbeginfullscreen", onVideoFullscreenStart)
-    video?.removeEventListener("webkitendfullscreen", onVideoFullscreenEnd)
   })
 
   $effect(() => {
@@ -69,29 +63,15 @@
   })
 
   function updateFullscreenState() {
-    fullscreen = (document.fullscreenElement || document.webkitFullscreenElement) === card
-  }
-
-  function onVideoFullscreenStart() {
-    fullscreen = true
-  }
-
-  function onVideoFullscreenEnd() {
-    fullscreen = false
+    fullscreen = document.fullscreenElement === card
   }
 
   async function toggleFullscreen() {
     try {
-      const activeElement = document.fullscreenElement || document.webkitFullscreenElement
-      if (activeElement === card) {
-        if (document.exitFullscreen) await document.exitFullscreen()
-        else document.webkitExitFullscreen?.()
-      } else if (card.requestFullscreen) {
-        await card.requestFullscreen()
-      } else if (card.webkitRequestFullscreen) {
-        card.webkitRequestFullscreen()
+      if (document.fullscreenElement === card) {
+        await document.exitFullscreen()
       } else {
-        video?.webkitEnterFullscreen?.()
+        await card.requestFullscreen()
       }
     } catch (error) {
       console.error("Could not toggle fullscreen video", error)

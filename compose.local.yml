@@ -1,0 +1,68 @@
+name: vivid-local
+
+services:
+  backend:
+    image: vivid-local-backend:dev
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: Dockerfile
+      pull: false
+    init: true
+    environment:
+      SIGNAL_ADDRESS: ":8080"
+      SIGNAL_ALLOWED_ORIGINS: "http://localhost:8000,http://127.0.0.1:8000"
+      SIGNAL_MAX_ROOM_PEERS: "8"
+      STUN_URLS: "stun:localhost:3478"
+      TURN_URLS: "turn:localhost:3478?transport=udp"
+      TURN_SHARED_SECRET: "vivid-local-development-secret-change-before-sharing"
+      TURN_TTL: "30m"
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - vivid-local
+    security_opt:
+      - no-new-privileges:true
+
+  coturn:
+    image: coturn/coturn:4.15.0-r0-alpine
+    pull_policy: never
+    init: true
+    network_mode: host
+    command:
+      - "--log-file=stdout"
+      - "--listening-port=3478"
+      - "--min-port=49160"
+      - "--max-port=49200"
+      - "--realm=localhost"
+      - "--fingerprint"
+      - "--use-auth-secret"
+      - "--static-auth-secret=vivid-local-development-secret-change-before-sharing"
+      - "--stale-nonce=600"
+      - "--no-cli"
+      - "--no-tls"
+      - "--no-dtls"
+      - "--no-multicast-peers"
+    tmpfs:
+      - /var/lib/coturn
+    security_opt:
+      - no-new-privileges:true
+
+  # web:
+  #   image: vivid-local-web:dev
+  #   pull_policy: never
+  #   build:
+  #     context: ./web
+  #     dockerfile: Dockerfile
+  #     pull: false
+  #   init: true
+  #   ports:
+  #     - "127.0.0.1:8000:8000"
+  #   networks:
+  #     - vivid-local
+  #   security_opt:
+  #     - no-new-privileges:true
+
+networks:
+  vivid-local:
+    driver: bridge

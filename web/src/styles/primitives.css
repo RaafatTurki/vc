@@ -1,6 +1,2 @@
-.ui-surface { border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--surface); }
 .ui-field { width: 100%; min-width: 0; height: var(--control-height); padding: 0 .875rem; border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink); background: var(--bg); }
 .ui-field:focus { border-color: var(--accent); outline: none; }
-.ui-badge { display: inline-flex; align-items: center; gap: .3125rem; padding: .3125rem var(--space-2); border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--surface-video); font-size: .68rem; font-weight: 750; }
-.ui-badge[data-tone="danger"] { color: var(--danger); border-color: var(--danger-border); }
-.ui-badge[data-tone="accent"] { color: var(--accent); border-color: rgb(var(--accent-rgb) / 30%); }

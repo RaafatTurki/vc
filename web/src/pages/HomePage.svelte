@@ -1,12 +1,12 @@
 <script lang="ts">
   import { Download, Mic, MicOff, RefreshCw, Video, VideoOff } from "@lucide/svelte"
-  import { createRoomID } from "../lib/call"
+  import { createRoomID } from "../lib/utils"
   import Button from "../lib/Button.svelte"
 
   interface Props {
     roomInput?: string
     signalInput?: string
-    participantName?: string
+    username?: string
     joinWithAudio?: boolean
     joinWithVideo?: boolean
     joining: boolean
@@ -19,7 +19,7 @@
   let {
     roomInput = $bindable(),
     signalInput = $bindable(),
-    participantName = $bindable(),
+    username = $bindable(),
     joinWithAudio = $bindable(),
     joinWithVideo = $bindable(),
     joining,
@@ -47,7 +47,7 @@
   <form onsubmit={onJoin} novalidate>
     <div class="form-field">
       <label for="nameInput">Your name</label>
-      <input class="ui-field" id="nameInput" bind:value={participantName} maxlength="32" autocomplete="name" placeholder="How others will see you" required>
+      <input class="ui-field" id="nameInput" bind:value={username} maxlength="32" autocomplete="name" placeholder="How others will see you" required>
     </div>
 
     <div class="form-field">
