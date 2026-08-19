@@ -3,6 +3,7 @@
   import { cleanString, createRoomID, detectDeviceType, checkRoomID } from "./lib/utils"
 
   import { CallEngine } from "./lib/callEngine.svelte"
+  import { ConnectionStatus, PageName } from "./lib/types"
   import TopBar from "./lib/TopBar.svelte"
   import CallPage from "./pages/CallPage.svelte"
   import HomePage from "./pages/HomePage.svelte"
@@ -12,10 +13,10 @@
   let signalInput = $state("")
   let username = $state("")
   let roomID = $state("")
-  let currentPage = $state<"home" | "call">("home")
+  let currentPage = $state<PageName>(PageName.HOME)
   let joining = $state(false)
   let setupError = $state("")
-  let statusState = $state<"idle" | "connecting" | "connected" | "error">("idle")
+  let statusState = $state<ConnectionStatus>(ConnectionStatus.IDLE)
   let statusText = $state("Ready")
   let copyLabel = $state("Copy invite link")
   let joinWithAudio = $state(true)
@@ -33,9 +34,9 @@
 
   onMount(() => {
     engine = new CallEngine({
-      isOnCallPage: () => currentPage === "call",
+      isOnCallPage: () => currentPage === PageName.CALL,
       onStatus: (state, text) => { statusState = state; statusText = text },
-      onJoined: () => { currentPage = "call"; navigateToCall() },
+      onJoined: () => { currentPage = PageName.CALL; navigateToCall() },
       onSetupError: (message) => { setupError = message },
       onCameraError: (message) => { cameraError = message },
     })
@@ -55,7 +56,7 @@
     if (routeRoom) {
       roomInput = routeRoom
       roomID = routeRoom
-      currentPage = "call"
+      currentPage = PageName.CALL
       if (!username) username = `Guest ${createRoomID().slice(0, 4)}`
       joinCall()
     } else {
@@ -117,7 +118,7 @@
   function goHome(pushHistory: boolean): void {
     closeConnections()
     joining = false
-    currentPage = "home"
+    currentPage = PageName.HOME
     roomInput = roomID
     cameraError = ""
     if (pushHistory) window.history.pushState({}, "", "/")
@@ -129,14 +130,14 @@
       goHome(false)
       return
     }
-    if (currentPage === "call" && roomID === nextRoom) return
+    if (currentPage === PageName.CALL && roomID === nextRoom) return
 
     closeConnections()
     joining = false
     cameraError = ""
     roomInput = nextRoom
     roomID = nextRoom
-    currentPage = "call"
+    currentPage = PageName.CALL
     if (!username) username = `Guest ${createRoomID().slice(0, 4)}`
     joinCall()
   }
@@ -211,12 +212,12 @@
 
 </script>
 
-<svelte:head><title>{currentPage === "call" ? `${roomID} · Vivid` : "Vivid"}</title></svelte:head>
+<svelte:head><title>{currentPage === PageName.CALL ? `${roomID} · Vivid` : "Vivid"}</title></svelte:head>
 
-<main class:shell-wide={currentPage === "call"} class="shell">
+<main class:shell-wide={currentPage === PageName.CALL} class="shell">
   <TopBar state={statusState} text={statusText} />
 
-  {#if currentPage === "home"}
+  {#if currentPage === PageName.HOME}
     <HomePage
       bind:roomInput
       bind:signalInput

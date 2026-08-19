@@ -11,9 +11,8 @@ import {
   createMicrophoneConstraints,
   createVideoConstraints,
 } from "./utils"
-import type { DeviceType, MediaDeviceOption, Peer, PeerState } from "./types"
-
-export type StatusState = "idle" | "connecting" | "connected" | "error"
+import type { MediaDeviceOption, Peer, PeerState } from "./types"
+import { ConnectionStatus, DeviceType } from "./types"
 
 export interface SignalMessage {
   type: string
@@ -39,7 +38,7 @@ export interface ChatMessage {
 
 export interface CallEngineHooks {
   isOnCallPage: () => boolean
-  onStatus?: (state: StatusState, text: string) => void
+  onStatus?: (state: ConnectionStatus, text: string) => void
   onJoined?: () => void
   onSetupError?: (message: string) => void
   onCameraError?: (message: string) => void
@@ -74,7 +73,7 @@ export class CallEngine {
   chatOpen = $state(true)
   unreadChatMessages = $state(0)
   chatMessages = $state<ChatMessage[]>([])
-  deviceType = $state<DeviceType>("computer")
+  deviceType = $state<DeviceType>(DeviceType.COMPUTER)
 
   private socket: WebSocket | null = null
   private selfPeerID = ""
@@ -113,7 +112,7 @@ export class CallEngine {
     this.joinSound = null
   }
 
-  private emitStatus(state: StatusState, text: string): void {
+  private emitStatus(state: ConnectionStatus, text: string): void {
     this.hooks.onStatus?.(state, text)
   }
 
@@ -155,7 +154,7 @@ export class CallEngine {
     this.callEpoch += 1
     this.signalQueue = Promise.resolve()
 
-    this.emitStatus("connecting", "Preparing call")
+    this.emitStatus(ConnectionStatus.CONNECTING, "Preparing call")
 
     try {
       this.localStream = await this.acquireCallMedia()
@@ -171,11 +170,11 @@ export class CallEngine {
       await this.openSignalingSocket(signalURL)
 
       this.hooks.onJoined?.()
-      this.emitStatus("connecting", "Joining room")
+      this.emitStatus(ConnectionStatus.CONNECTING, "Joining room")
       return true
     } catch (error) {
       this.closeConnections()
-      this.emitStatus("error", "Could not join")
+      this.emitStatus(ConnectionStatus.ERROR, "Could not join")
       const message = getMediaErrorMsg(error)
       if (this.hooks.isOnCallPage()) this.hooks.onCameraError?.(message)
       else this.hooks.onSetupError?.(message)
@@ -202,7 +201,7 @@ export class CallEngine {
     this.screenSharing = false
     this.sharingScreen = false
     this.setCameraError("")
-    this.emitStatus("idle", "Ready to rejoin")
+    this.emitStatus(ConnectionStatus.IDLE, "Ready to rejoin")
   }
 
   close(): void {
@@ -257,7 +256,7 @@ export class CallEngine {
           this.welcomed = true
           this.selfPeerID = message.peerId || ""
           this.iceServers = Array.isArray(message.iceServers) ? message.iceServers : []
-          this.emitStatus("connected", "Connected")
+          this.emitStatus(ConnectionStatus.CONNECTED, "Connected")
           this.chatMessages = []
           for (const item of message.chatHistory ?? []) this.appendChatMessage(item.from || "", item.payload, false)
           for (const peerID of message.peers ?? []) {
@@ -294,7 +293,7 @@ export class CallEngine {
           if (message.from) await this.receiveCandidate(message.from, message.payload as RTCIceCandidateInit)
           break
         case "error":
-          this.emitStatus("error", message.message || "Signaling error")
+          this.emitStatus(ConnectionStatus.ERROR, message.message || "Signaling error")
           break
         default:
           console.warn("Unknown signaling message", message)
@@ -302,7 +301,7 @@ export class CallEngine {
     } catch (error) {
       if (epoch !== this.callEpoch) return
       console.error("Could not process signaling message", error)
-      this.emitStatus("error", "Signaling error")
+      this.emitStatus(ConnectionStatus.ERROR, "Signaling error")
     }
   }
 
@@ -315,12 +314,12 @@ export class CallEngine {
       if (this.hooks.isOnCallPage()) this.hooks.onCameraError?.(message)
       else this.hooks.onSetupError?.(message)
     }
-    this.emitStatus("error", event.reason || "Disconnected")
+    this.emitStatus(ConnectionStatus.ERROR, event.reason || "Disconnected")
   }
 
   private onSocketError = (event: Event): void => {
     if (event.currentTarget !== this.socket) return
-    if (!this.leaving) this.emitStatus("error", "Connection problem")
+    if (!this.leaving) this.emitStatus(ConnectionStatus.ERROR, "Connection problem")
   }
 
 
@@ -335,7 +334,7 @@ export class CallEngine {
     const peer: Peer = {
       id: peerID,
       name: `Guest ${peerID.slice(0, 6)}`,
-      device: "computer",
+      device: DeviceType.COMPUTER,
       microphoneMuted: false,
       noiseCancellationEnabled: true,
       cameraStopped: false,
@@ -402,7 +401,7 @@ export class CallEngine {
       if (connection.connectionState === "failed" || connection.connectionState === "closed") {
         this.removePeer(peerID)
       } else if (connection.connectionState === "connected") {
-        this.emitStatus("connected", `${this.peers.size + 1} people in call`)
+        this.emitStatus(ConnectionStatus.CONNECTED, `${this.peers.size + 1} people in call`)
       }
     })
 
@@ -483,7 +482,7 @@ export class CallEngine {
     if (!peer) return
     this.peers.delete(peerID)
     peer.connection.close()
-    this.emitStatus("connected", this.peers.size ? `${this.peers.size + 1} people in call` : "Connected")
+    this.emitStatus(ConnectionStatus.CONNECTED, this.peers.size ? `${this.peers.size + 1} people in call` : "Connected")
   }
 
   private async renegotiatePeers(): Promise<void> {
@@ -543,7 +542,7 @@ export class CallEngine {
   private receivePeerState(peerID: string, state: PeerState): void {
     const peer = this.createPeer(peerID)
     peer.name = cleanString(state?.name) || peer.name
-    peer.device = state?.device === "mobile" ? "mobile" : "computer"
+    peer.device = state?.device === DeviceType.MOBILE ? DeviceType.MOBILE : DeviceType.COMPUTER
     peer.microphoneMuted = state?.microphoneMuted === true
     peer.noiseCancellationEnabled = state?.noiseCancellationEnabled !== false
     peer.cameraStopped = state?.cameraStopped === true

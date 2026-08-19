@@ -1,3 +1,5 @@
+import { DeviceType } from "./types"
+
 export function checkRoomID(id: string | null): id is string {
   if (id == null) return false
   return typeof id === "string" && /^[A-Za-z0-9]{6}$/.test(id)
@@ -22,11 +24,11 @@ export function cleanString(value: unknown) {
   return value.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 32)
 }
 
-export function detectDeviceType(): "mobile" | "computer" {
-  if (navigator.userAgentData?.mobile) return "mobile"
-  if (/Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return "mobile"
-  if (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1) return "mobile"
-  return "computer"
+export function detectDeviceType(): DeviceType {
+  if (navigator.userAgentData?.mobile) return DeviceType.MOBILE
+  if (/Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) return DeviceType.MOBILE
+  if (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1) return DeviceType.MOBILE
+  return DeviceType.COMPUTER
 }
 
 

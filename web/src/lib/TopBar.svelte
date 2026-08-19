@@ -1,5 +1,7 @@
 <script lang="ts">
-  let { state, text }: { state: "idle" | "connecting" | "connected" | "error"; text: string } = $props()
+  import type { ConnectionStatus } from "./types"
+
+  let { state, text }: { state: ConnectionStatus; text: string } = $props()
 </script>
 
 <header>

@@ -1,4 +1,19 @@
-export type DeviceType = "mobile" | "computer"
+export enum PageName {
+  HOME = "home",
+  CALL = "call",
+}
+
+export enum ConnectionStatus {
+  IDLE = "idle",
+  CONNECTING = "connecting",
+  CONNECTED = "connected",
+  ERROR = "error",
+}
+
+export enum DeviceType {
+  MOBILE = "mobile",
+  COMPUTER = "computer",
+}
 
 export interface MediaDeviceOption {
   deviceId: string

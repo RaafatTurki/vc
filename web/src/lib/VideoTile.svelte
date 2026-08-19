@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte"
   import { AudioLinesX, Maximize2, MicOff, Minimize2, Monitor, ScreenShare, Smartphone, VideoOff, Volume2, VolumeX } from "@lucide/svelte"
-  import type { DeviceType } from "./types"
+  import { DeviceType } from "./types"
   import { mediaStream } from "./mediaElement"
   import { observeVoiceActivity } from "./voiceActivity"
 
@@ -23,7 +23,7 @@
   let {
     stream,
     name,
-    device = "computer",
+    device = DeviceType.COMPUTER,
     microphoneMuted = false,
     noiseCancellationEnabled = true,
     cameraStopped = false,
@@ -81,7 +81,7 @@
 
 <article bind:this={card} class:local-card={local} class:remote-card={!local} class:mirrored class:screen-sharing={screenSharing} class:speaking class="video-card">
   <video bind:this={video} use:mediaStream={stream} autoplay muted={local || locallyMuted} playsinline></video>
-  <div class="video-meta" aria-label={`${device === "mobile" ? "Mobile" : "PC"}${microphoneMuted ? ", microphone muted" : ""}`}>
+  <div class="video-meta" aria-label={`${device === DeviceType.MOBILE ? "Mobile" : "PC"}${microphoneMuted ? ", microphone muted" : ""}`}>
     {#if !screenOnly && microphoneMuted}
       <span class="video-badge muted-badge" title="Microphone off" aria-label="Microphone off">
         <MicOff class="badge-icon" aria-hidden="true" />
@@ -105,7 +105,7 @@
   </div>
   <div class="video-label">
     {#if !screenOnly}
-      {#if device === "mobile"}<Smartphone class="device-icon" aria-hidden="true" />{:else}<Monitor class="device-icon" aria-hidden="true" />{/if}
+      {#if device === DeviceType.MOBILE}<Smartphone class="device-icon" aria-hidden="true" />{:else}<Monitor class="device-icon" aria-hidden="true" />{/if}
     {/if}
     <span>{name}</span>
   </div>
